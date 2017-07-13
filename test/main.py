@@ -39,42 +39,58 @@ def main(argv):
     regex = re.compile(r"#.*", re.IGNORECASE)
     file2 = regex.sub("", file.read())
     file2 = file2.replace(" ", "")
-    print(file2)
+    # print(file2)
     left = re.findall(".*[A-Z]\s*(?=\=>)|.*[A-Z]\s*(?=<\=>)", file2)
     right = re.findall("(?<=\=>).*[A-Z]\s*(?=\n)|(?<=<\=>).*[A-Z]\s*(?=\n)", file2)
     equ = re.findall("=>|<=>", file2)
     equal = re.findall("(?<=\n=).*", file2)
     query = re.findall("(?<=\n\?).*", file2)
+
+
+
+
+
+    # tableau tous les lettre pour chaque ligne
+    letterLine = []
     file_content = file2.split('\n')
-    tab = []
-    tab2 = []
     for lines in file_content[0:]:
         reg = re.findall("[A-Z]", lines)
-        tab.append(reg)
-    tab2 = re.findall("[A-Z]", file2)
-    dic = {}
+        letterLine.append(reg)
 
-    for i in tab2:
+    #toutes lettre du fichier avec doublon
+    letterFile = []
+    letterFile = re.findall("[A-Z]", file2)
+
+    # dictionnaire des lettres avec leurs valeurs
+    dic = {}
+    for i in letterFile:
         if equal[0].find(i) != -1:
             dic[i] = {"letter": i, "val": True, "constant":True}
         else:
             dic[i] = {"letter": i, "val": False, "constant":False}
-    # for lines in left[0:]:
-    #      tab.append(re.findall("[A-Z]", lines))
+    #for lines in left[0:]:
+        # tab.append(re.findall("[A-Z]", lines))
     # equal = equal.split("[A-Z]", 1)
 
     # for c in equal:
     #     dic[c] = {"letter": c, "val": True, "constant":True}
 
-    print left
+    print "left", left
     print "right", right
     print equ
-    print tab
+    print "letterLine" , letterLine
     print equal[0]
 
     print query
-    print tab2
+    print letterFile
     print dic
     # print(and_rule(True, True))
+    # for i in query[0]:
+    #     for e in letterLine:
+
+    #    print i
+
+
+
 if __name__ == "__main__":
     main(sys.argv[1:])
