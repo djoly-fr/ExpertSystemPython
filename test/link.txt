@@ -4,3 +4,17 @@ http://www.j-paine.org/students/lectures/lect3/node13.html#SECTION00083000000000
 
 #cooking function
 http://pyke.sourceforge.net/about_pyke/cooking_functions.html
+
+
+a => b
+=a
+?b
+
+A=>B
+B=>C
+=A
+?C
+
+A+B=>C
+=AB
+?C

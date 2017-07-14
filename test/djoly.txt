@@ -12,13 +12,13 @@ A + B       <=> !C      # A and B if and only if not C
 ?GVX                    # Queries : What are G, V and X ?
 
 F= ind
-c = true
+c d h e= true
+
+x|y = true
 
 
-C           => E
-A+B+C =>D
-A + !B      => F
+
 C | !G      => H
-V ^ W => X # V xor W implies X A+B =>Y+Z
-C|D =>X|V #CorDimpliesXorV E + F => !V
-A + B       <=> C
+
+V ^ W => X
+C|D =>X|V

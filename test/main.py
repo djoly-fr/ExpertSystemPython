@@ -20,19 +20,47 @@ class Rule:
     def or_rule(a, b):
         return (a or b)
 
-class letter:
-    boolean = None
-    constant = None
+def letterForEachLine(file):
+    # tableau tous les lettre pour chaque ligne
+    letterLine = []
+    file_content = file.split('\n')
+    for lines in file_content[0:]:
+        reg = re.findall("[A-Z]", lines)
+        letterLine.append(reg)
+    return letterLine
 
-def letter(l):
-    # tab = [:]
+def implicationDic(equ):
+    # dictionnaire des implications True => ou false <=>
     dic = {}
-    dic['letter'] = l
-    dic['val'] = False
-    dic['constant'] = False
+    index = 0
+    for i in equ:
+        if i.startswith('=>'):
+            dic[index] = {"equ": i, "val": True}
+        else:
+            dic[index] = {"equ": i, "val": False}
+        index += 1
     return dic
 
-    dic['A'] = {}
+def letterDicValue(equal, letterFile):
+    # dictionnaire des lettres avec leurs valeurs
+    dic = {}
+    for i in letterFile:
+        if equal[0].find(i) != -1:
+            dic[i] = {"letter": i, "val": True, "constant":True}
+        else:
+            dic[i] = {"letter": i, "val": False, "constant":False}
+    return dic
+
+def printAll(dicEqu, dic, left, right, equal, query, letterFile, equ, letterLine):
+    print(dicEqu)
+    print "left", left
+    print "right", right
+    print equ
+    print "letterLine" , letterLine
+    print equal[0]
+    print query
+    print letterFile
+    print dic
 
 def main(argv):
     file = open(argv[0], 'r')
@@ -46,51 +74,19 @@ def main(argv):
     equal = re.findall("(?<=\n=).*", file2)
     query = re.findall("(?<=\n\?).*", file2)
 
-
-
-
-
     # tableau tous les lettre pour chaque ligne
-    letterLine = []
-    file_content = file2.split('\n')
-    for lines in file_content[0:]:
-        reg = re.findall("[A-Z]", lines)
-        letterLine.append(reg)
+    letterLine = letterForEachLine(file2)
 
     #toutes lettre du fichier avec doublon
     letterFile = []
     letterFile = re.findall("[A-Z]", file2)
 
+    # dict pour le savoir si c'est => ou <=>
+    dicEqu = implicationDic(equ)
+
     # dictionnaire des lettres avec leurs valeurs
-    dic = {}
-    for i in letterFile:
-        if equal[0].find(i) != -1:
-            dic[i] = {"letter": i, "val": True, "constant":True}
-        else:
-            dic[i] = {"letter": i, "val": False, "constant":False}
-    #for lines in left[0:]:
-        # tab.append(re.findall("[A-Z]", lines))
-    # equal = equal.split("[A-Z]", 1)
-
-    # for c in equal:
-    #     dic[c] = {"letter": c, "val": True, "constant":True}
-
-    print "left", left
-    print "right", right
-    print equ
-    print "letterLine" , letterLine
-    print equal[0]
-
-    print query
-    print letterFile
-    print dic
-    # print(and_rule(True, True))
-    # for i in query[0]:
-    #     for e in letterLine:
-
-    #    print i
-
-
+    dic = letterDicValue(equal, letterFile)
+    printAll(dicEqu, dic, left, right, equal, query, letterFile, equ, letterLine)
 
 if __name__ == "__main__":
     main(sys.argv[1:])
