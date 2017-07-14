@@ -52,15 +52,15 @@ def letterDicValue(equal, letterFile):
     return dic
 
 def printAll(dicEqu, dic, left, right, equal, query, letterFile, equ, letterLine):
-    print(dicEqu)
-    print "left", left
-    print "right", right
-    print equ
-    print "letterLine" , letterLine
-    print equal[0]
-    print query
-    print letterFile
-    print dic
+    print("dicEqu", dicEqu)
+    print("left", left)
+    print("right", right)
+    print("ewu" ,equ)
+    print("letterLine" , letterLine)
+    print("equal[0]", equal[0])
+    print("query", query)
+    print("letterFile0", letterFile)
+    print("dic", dic)
 
 def main(argv):
     file = open(argv[0], 'r')
