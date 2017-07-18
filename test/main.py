@@ -54,21 +54,52 @@ def letterDicValue(equal, letterFile):
 # def determineBool(left, right, dicEqu, dic):
 #     # print "a"
 #     i = 0
-#     for key in dic:
-#         if dic[key]["val"] == True:
-#             right[0]
+#     for letter in left:
+#         for key in dic:
+#             print(dic[key])
+#             if dic[key]["val"] == True:
+#                 print(i)
+#                 if (right[i]):
+#                     print("bonjour")
+#                     dic[right[i]]["val"] = True
 #         i += 1
+#             # print("hello")
+#             # print(dic[right[i]]["val"])
+#         # i += 1
+
+def findQuery(query, left, right):
+    dict = {}
+    print ("hello")
+    lq = list(query)
+    i = 0
+    tab = []
+    for l in lq:
+        # dict[0]["line"] = []
+        for r in right:
+            if l in r:
+                print("bonjour")
+                if "line" in dict:
+                    tab = dict[l]["line"]
+                # print("a")
+                tab.append(i)
+                print("b")
+                dict[l] = {"letter": l, "line": tab}
+                print (tab)
+                # dict[0] = {"letter" : l}
+                # dict[l]["line"] = []
+                # dict[0]["line"].append = i
+            i += 1
 
 def printAll(dicEqu, dic, left, right, equal, query, letterFile, equ, letterLine):
-    print "dicEqu", dicEqu
-    print "left", left
-    print "right", right
-    print "ewu" ,equ
-    print "letterLine" , letterLine
-    print "equal[0]", equal
-    print "query", query
-    print "letterFile", letterFile
-    print "dic", dic
+    print ("dicEqu", dicEqu)
+    print ("left", left)
+    print ("right", right)
+    print ("ewu" ,equ)
+    print ("letterLine" , letterLine)
+    print ("equal[0]", equal)
+    print ("query", query)
+    print ("letterFile", letterFile)
+    print ("dic", dic)
 
 def main(argv):
     file = open(argv[0], 'r')
@@ -99,6 +130,7 @@ def main(argv):
     dic = letterDicValue(equal, letterFile)
     # putLettersToTrue(dic, equal)
     printAll(dicEqu, dic, left, right, equal, query, letterFile, equ, letterLine)
-
+    # determineBool(left, right, dicEqu, dic)
+    findQuery(query, left, right)
 if __name__ == "__main__":
     main(sys.argv[1:])
