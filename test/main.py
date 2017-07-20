@@ -51,44 +51,26 @@ def letterDicValue(equal, letterFile):
             dic[i] = {"letter": i, "val": False, "constant": None}
     return dic
 
-# def determineBool(left, right, dicEqu, dic):
-#     # print "a"
-#     i = 0
-#     for letter in left:
-#         for key in dic:
-#             print(dic[key])
-#             if dic[key]["val"] == True:
-#                 print(i)
-#                 if (right[i]):
-#                     print("bonjour")
-#                     dic[right[i]]["val"] = True
-#         i += 1
-#             # print("hello")
-#             # print(dic[right[i]]["val"])
-#         # i += 1
-
-def findQuery(query, left, right):
+def findQueryLetter(query, left, right):
     dict = {}
-    print ("hello")
-    lq = list(query)
+    lq = list(query[0])
     i = 0
     tab = []
+
     for l in lq:
-        # dict[0]["line"] = []
+        i = 0
+        dict[l] = {"letter": l, "right": []}
         for r in right:
             if l in r:
-                print("bonjour")
-                if "line" in dict:
-                    tab = dict[l]["line"]
-                # print("a")
-                tab.append(i)
-                print("b")
-                dict[l] = {"letter": l, "line": tab}
-                print (tab)
-                # dict[0] = {"letter" : l}
-                # dict[l]["line"] = []
-                # dict[0]["line"].append = i
+                if "right" in dict:
+                    tab = dict[l]["right"]
+                if i in tab:
+                    print("non")
+                else:
+                    tab.append(i)
+                dict[l] = {"letter": l, "right": tab}
             i += 1
+    return dict
 
 def printAll(dicEqu, dic, left, right, equal, query, letterFile, equ, letterLine):
     print ("dicEqu", dicEqu)
@@ -101,6 +83,72 @@ def printAll(dicEqu, dic, left, right, equal, query, letterFile, equ, letterLine
     print ("letterFile", letterFile)
     print ("dic", dic)
 
+def queryResult(query, dic):
+    q = list(query[0])
+    tmp = None
+    for q in q:
+        # print (q)
+        tmp = dic[q]["val"]
+        if (tmp == None):
+            print (q, "is undetermined")
+        elif (tmp == True):
+            print (q, "is True")
+        else:
+            print (q, "is False")
+
+def handleOperation(side, dic, dict):
+    size = len(side)
+    for index in side:
+        i = index.find("+")
+        print ("i", i)
+        if i >= 0:
+            print(index)
+            #prendre l'element inferieur et l'element superieur pour faire le calcul
+        else:
+            print("let")
+    return True
+    #mettre à solved toutes les lignes où on a trouvé une solution
+    #tant que ce n'est pas solved on boucle
+
+def handleCalc(side, dic, dict):
+    size = len(side)
+    if size > 2:
+        print ("size >2 ")
+        return handleOperation(side, dic, dict)
+    elif size <= 2:
+        print ("< 2")
+        return dic[side[0]]["val"]
+
+def handleLeftSide(dict, left, right, dic, query):
+    # print ("d")
+    i = 0
+    index = 0
+    result = None
+    lcalc = None
+    rcalc = None
+    l = list(left)
+    r = list(right)
+    for i in l:
+        if (i >= 'A' and i <= 'Z'):
+            # print(dic[i]["val"])
+            # result = dic[i]["val"]
+            result = handleCalc(l, dic, dict)
+            print (dic[r[0]]["val"])
+            dic[r[0]]["val"] = result
+            print (dic[r[0]]["val"])
+        index += 1
+    queryResult(query, dic)
+    return dic
+
+def solveQuery(dict, left, right, dic, query):
+    # print ("b")
+    for key in dict:
+        print(dict[key]["right"])
+        for value in dict[key]["right"]:
+            print(left[value])
+            dic = handleLeftSide(dict, left[value], right[value], dic, query)
+    return dic
+
 def main(argv):
     file = open(argv[0], 'r')
     regex = re.compile(r"#.*", re.IGNORECASE)
@@ -112,25 +160,22 @@ def main(argv):
     equ = re.findall("=>|<=>", file2)
     equal = re.findall("(?<=\n=).*", file2)
     query = re.findall("(?<=\n\?).*", file2)
-
     #pour split le string en lettre
     equal = list(equal[0])
-
     # tableau tous les lettre pour chaque ligne
     letterLine = letterForEachLine(file2)
-
     #toutes lettre du fichier avec doublon
     letterFile = []
     letterFile = re.findall("[A-Z]", file2)
-
     # dict pour le savoir si c'est => ou <=>
     dicEqu = implicationDic(equ)
-
     # dictionnaire des lettres avec leurs valeurs
     dic = letterDicValue(equal, letterFile)
     # putLettersToTrue(dic, equal)
     printAll(dicEqu, dic, left, right, equal, query, letterFile, equ, letterLine)
     # determineBool(left, right, dicEqu, dic)
-    findQuery(query, left, right)
+    dict = findQueryLetter(query, left, right)
+    solveQuery(dict, left, right, dic, query)
+
 if __name__ == "__main__":
     main(sys.argv[1:])
