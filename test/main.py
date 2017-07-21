@@ -3,22 +3,24 @@
 import re
 import sys
 
-class Rule:
-    def and_rule(a, b):
-        print("and")
-        return (a and b)
+# class Rule:
+def and_rule(a, b):
+    print ("and", a, b, a and b)
+    return (a and b)
 
-    def impl(a):
-        if a:
-            return (True)
-        else:
-            return (None)
+def impl(a):
+    if a:
+        return (True)
+    else:
+        return (None)
 
-    def xor_rule(a, b):
-        return ((a and not b) or (not a and b))
+def xor_rule(a, b):
+    print("xor", a, b, (a and not b) or (not a and b))
+    return ((a and not b) or (not a and b))
 
-    def or_rule(a, b):
-        return (a or b)
+def or_rule(a, b):
+    print("or", a, b, a or b)
+    return (a or b)
 
 def letterForEachLine(file):
     # tableau tous les lettre pour chaque ligne
@@ -51,6 +53,7 @@ def letterDicValue(equal, letterFile):
             dic[i] = {"letter": i, "val": False, "constant": None}
     return dic
 
+#pour avoir la position des lettres de la query
 def findQueryLetter(query, left, right):
     dict = {}
     lq = list(query[0])
@@ -83,6 +86,7 @@ def printAll(dicEqu, dic, left, right, equal, query, letterFile, equ, letterLine
     print ("letterFile", letterFile)
     print ("dic", dic)
 
+#print le resultat de la query
 def queryResult(query, dic):
     q = list(query[0])
     tmp = None
@@ -96,25 +100,37 @@ def queryResult(query, dic):
         else:
             print (q, "is False")
 
-def previous_and_next(some_iterable):
-    prevs, items, nexts = tee(some_iterable, 3)
-    prevs = chain([None], prevs)
-    nexts = chain(islice(nexts, 1, None), [None])
-    return izip(prevs, items, nexts)
+def not_rule(a):
+    return (not a)
 
 def handleOperation(side, dic, dict):
-    size = len(side)
-    for index in side:
-        add_ = index.find("+")
-        or_ = index.find("|")
-        xor_ = index.find("^")
-        print ("i", i)
-        if i >= 0:
-            print(index)
-            #prendre l'element inferieur et l'element superieur pour faire le calcul
+    result = None
+    rnot = None
+    ind = 0
+    for current, last in zip(side[1:], side):
+        # diff = current - last
+        print ("last", last)
+        print ("current", current)
+        not_ = last.find("!")
+        add_ = last.find("+")
+        or_ = last.find("|")
+        xor_ = last.find("^")
+        if not_ >= 0:
+            rnot = not dic[current]["val"]
+        if add_ >= 0 and result != None and not_ < 0:
+            and_rule(result, dic[current]["val"])
+        elif or_ >= 0 and result != None and not_ < 0:
+            or_rule(result, dic[current]["val"])
+        elif xor_ >= 0 and result != None and not_ < 0:
+            xor_rule(result, dic[current]["val"])
+        elif not_ >= 0:
+            rnot = not_rule(dic[current]["val"])
         else:
-            print("let")
-    return True
+            if dic[last]["val"] != None:
+                print("hello")
+                result = dic[last]["val"]
+                print(result)
+    return result
     #mettre à solved toutes les lignes où on a trouvé une solution
     #tant que ce n'est pas solved on boucle
 
@@ -128,7 +144,6 @@ def handleCalc(side, dic, dict):
         return dic[side[0]]["val"]
 
 def handleLeftSide(dict, left, right, dic, query):
-    # print ("d")
     i = 0
     index = 0
     result = None
@@ -136,24 +151,20 @@ def handleLeftSide(dict, left, right, dic, query):
     rcalc = None
     l = list(left)
     r = list(right)
-    for i in l:
-        if (i >= 'A' and i <= 'Z'):
-            # print(dic[i]["val"])
-            # result = dic[i]["val"]
-            result = handleCalc(l, dic, dict)
-            print (dic[r[0]]["val"])
-            dic[r[0]]["val"] = result
-            print (dic[r[0]]["val"])
-        index += 1
+    result = handleCalc(l, dic, dict)
+    print (dic[r[0]]["val"])
+    dic[r[0]]["val"] = result
+    print (dic[r[0]]["val"])
+    index += 1
     queryResult(query, dic)
     return dic
 
 def solveQuery(dict, left, right, dic, query):
     # print ("b")
     for key in dict:
-        print(dict[key]["right"])
+        print("hello", dict[key]["right"])
         for value in dict[key]["right"]:
-            print(left[value])
+            print("bonjour", left[value])
             dic = handleLeftSide(dict, left[value], right[value], dic, query)
     return dic
 
