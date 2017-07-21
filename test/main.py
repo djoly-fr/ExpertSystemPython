@@ -96,10 +96,18 @@ def queryResult(query, dic):
         else:
             print (q, "is False")
 
+def previous_and_next(some_iterable):
+    prevs, items, nexts = tee(some_iterable, 3)
+    prevs = chain([None], prevs)
+    nexts = chain(islice(nexts, 1, None), [None])
+    return izip(prevs, items, nexts)
+
 def handleOperation(side, dic, dict):
     size = len(side)
     for index in side:
-        i = index.find("+")
+        add_ = index.find("+")
+        or_ = index.find("|")
+        xor_ = index.find("^")
         print ("i", i)
         if i >= 0:
             print(index)
