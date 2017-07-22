@@ -115,21 +115,40 @@ def handleOperation(side, dic, dict):
         add_ = last.find("+")
         or_ = last.find("|")
         xor_ = last.find("^")
-        if not_ >= 0:
-            rnot = not dic[current]["val"]
-        if add_ >= 0 and result != None and not_ < 0:
+        if current.find("!") >= 0:
+            if add_ >= 0:
+                ind = 1
+            elif or_ >= 0:
+                ind = 2
+            elif xor_ >= 0:
+                ind = 3
+        print("ind", ind)
+        if add_ >= 0 and result != None and ind != 1:
+            print("bonjour")
             and_rule(result, dic[current]["val"])
-        elif or_ >= 0 and result != None and not_ < 0:
+        elif not_ >= 0 and ind == 1:
+            print("lol")
+            and_rule(result, not dic[current]["val"])
+            ind = 0
+        elif or_ >= 0 and result != None and ind != 2:
             or_rule(result, dic[current]["val"])
-        elif xor_ >= 0 and result != None and not_ < 0:
+        elif not_ >= 0 and ind == 2:
+            or_rule(result, dic[current]["val"])
+            ind = 0
+        elif xor_ >= 0 and result != None and ind != 3:
             xor_rule(result, dic[current]["val"])
-        elif not_ >= 0:
-            rnot = not_rule(dic[current]["val"])
+        elif not_ >= 0 and ind == 3:
+            xor_rule(result, dic[current]["val"])
+            ind = 0
+        # elif not_ >= 0:
+        #     rnot = not_rule(dic[current]["val"])
         else:
-            if dic[last]["val"] != None:
+            print("else")
+            if  ind == 0 and dic[last]["val"] != None:
                 print("hello")
                 result = dic[last]["val"]
                 print(result)
+        print("result", result)
     return result
     #mettre à solved toutes les lignes où on a trouvé une solution
     #tant que ce n'est pas solved on boucle
