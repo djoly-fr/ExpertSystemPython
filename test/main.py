@@ -46,6 +46,8 @@ def implicationDic(equ):
 def letterDicValue(equal, letterFile):
     # dictionnaire des lettres avec leurs valeurs
     dic = {}
+    # equal = list(equal[0])
+    print ("equal", equal)
     for i in letterFile:
         if equal[0].find(i) != -1:
             dic[i] = {"letter": i, "val": True, "constant": True}
@@ -91,7 +93,6 @@ def queryResult(query, dic):
     q = list(query[0])
     tmp = None
     for q in q:
-        # print (q)
         tmp = dic[q]["val"]
         if (tmp == None):
             print (q, "is undetermined")
@@ -103,14 +104,13 @@ def queryResult(query, dic):
 def not_rule(a):
     return (not a)
 
+#c'est degueux mais ca gere les operations
 def handleOperation(side, dic, dict):
     result = None
     rnot = None
     ind = 0
+    #prend l'element precedent et l'actuelle
     for current, last in zip(side[1:], side):
-        # diff = current - last
-        print ("last", last)
-        print ("current", current)
         not_ = last.find("!")
         add_ = last.find("+")
         or_ = last.find("|")
@@ -122,37 +122,36 @@ def handleOperation(side, dic, dict):
                 ind = 2
             elif xor_ >= 0:
                 ind = 3
+        print ("last", last)
+        print ("current", current)
         print("ind", ind)
         if add_ >= 0 and result != None and ind != 1:
-            print("bonjour")
-            and_rule(result, dic[current]["val"])
+            result = and_rule(result, dic[current]["val"])
         elif not_ >= 0 and ind == 1:
-            print("lol")
-            and_rule(result, not dic[current]["val"])
+            result = and_rule(result, not dic[current]["val"])
             ind = 0
         elif or_ >= 0 and result != None and ind != 2:
-            or_rule(result, dic[current]["val"])
+            result = or_rule(result, dic[current]["val"])
         elif not_ >= 0 and ind == 2:
-            or_rule(result, dic[current]["val"])
+            result = or_rule(result, dic[current]["val"])
             ind = 0
         elif xor_ >= 0 and result != None and ind != 3:
-            xor_rule(result, dic[current]["val"])
+            result = xor_rule(result, dic[current]["val"])
         elif not_ >= 0 and ind == 3:
-            xor_rule(result, dic[current]["val"])
+            result = xor_rule(result, dic[current]["val"])
             ind = 0
-        # elif not_ >= 0:
-        #     rnot = not_rule(dic[current]["val"])
         else:
             print("else")
             if  ind == 0 and dic[last]["val"] != None:
-                print("hello")
+                # print("hello")
                 result = dic[last]["val"]
-                print(result)
+                # print("result", result)
         print("result", result)
+    print ("result for", side, "is", result)
     return result
     #mettre à solved toutes les lignes où on a trouvé une solution
     #tant que ce n'est pas solved on boucle
-
+    #si il connait pas il passe à autre chose
 def handleCalc(side, dic, dict):
     size = len(side)
     if size > 2:
@@ -171,9 +170,9 @@ def handleLeftSide(dict, left, right, dic, query):
     l = list(left)
     r = list(right)
     result = handleCalc(l, dic, dict)
-    print (dic[r[0]]["val"])
+    print ("final bef", dic[r[0]]["val"])
     dic[r[0]]["val"] = result
-    print (dic[r[0]]["val"])
+    print ("final aft", dic[r[0]]["val"])
     index += 1
     queryResult(query, dic)
     return dic
@@ -199,7 +198,7 @@ def main(argv):
     equal = re.findall("(?<=\n=).*", file2)
     query = re.findall("(?<=\n\?).*", file2)
     #pour split le string en lettre
-    equal = list(equal[0])
+    # equal = list(equal[0])
     # tableau tous les lettre pour chaque ligne
     letterLine = letterForEachLine(file2)
     #toutes lettre du fichier avec doublon
