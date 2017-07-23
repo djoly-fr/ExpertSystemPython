@@ -2,6 +2,7 @@
 # coding: utf-8
 import re
 import sys
+import collections
 
 # class Rule:
 def and_rule(a, b):
@@ -46,8 +47,6 @@ def implicationDic(equ):
 def letterDicValue(equal, letterFile):
     # dictionnaire des lettres avec leurs valeurs
     dic = {}
-    # equal = list(equal[0])
-    print ("equal", equal)
     for i in letterFile:
         if equal[0].find(i) != -1:
             dic[i] = {"letter": i, "val": True, "constant": True}
@@ -93,6 +92,7 @@ def queryResult(query, dic):
     q = list(query[0])
     tmp = None
     for q in q:
+        # print (q)
         tmp = dic[q]["val"]
         if (tmp == None):
             print (q, "is undetermined")
@@ -104,12 +104,12 @@ def queryResult(query, dic):
 def not_rule(a):
     return (not a)
 
-#c'est degueux mais ca gere les operations
 def handleOperation(side, dic, dict):
     result = None
     rnot = None
     ind = 0
-    #prend l'element precedent et l'actuelle
+    i = 0
+    #prend l'element actuelle et le suivant side
     for current, last in zip(side[1:], side):
         not_ = last.find("!")
         add_ = last.find("+")
@@ -126,40 +126,75 @@ def handleOperation(side, dic, dict):
         print ("current", current)
         print("ind", ind)
         if add_ >= 0 and result != None and ind != 1:
+            print ("1")
             result = and_rule(result, dic[current]["val"])
         elif not_ >= 0 and ind == 1:
+            print ("2")
             result = and_rule(result, not dic[current]["val"])
             ind = 0
         elif or_ >= 0 and result != None and ind != 2:
+            print ("3")
             result = or_rule(result, dic[current]["val"])
         elif not_ >= 0 and ind == 2:
-            result = or_rule(result, dic[current]["val"])
+            print ("4")
+            result = or_rule(result, not dic[current]["val"])
             ind = 0
         elif xor_ >= 0 and result != None and ind != 3:
+            print ("5")
             result = xor_rule(result, dic[current]["val"])
         elif not_ >= 0 and ind == 3:
-            result = xor_rule(result, dic[current]["val"])
+            print ("6")
+            result = xor_rule(result, not dic[current]["val"])
             ind = 0
+        elif not_ >= 0 and ind == 0:
+            print ("7")
+            result = not dic[current]["val"]
+        elif not_ >= 0:
+            print ("8")
+            rnot = not_rule(dic[current]["val"])
         else:
             print("else")
-            if  ind == 0 and dic[last]["val"] != None:
-                # print("hello")
+            if ind == 0 and i == 0:
+                print("9", i)
                 result = dic[last]["val"]
-                # print("result", result)
+                # print(result)
         print("result", result)
-    print ("result for", side, "is", result)
+        i += 1
+        print ("i", i)
     return result
     #mettre à solved toutes les lignes où on a trouvé une solution
     #tant que ce n'est pas solved on boucle
-    #si il connait pas il passe à autre chose
+
+#je regarde si c'est superieur à deux caractères
 def handleCalc(side, dic, dict):
     size = len(side)
     if size > 2:
         print ("size >2 ")
         return handleOperation(side, dic, dict)
     elif size <= 2:
-        print ("< 2")
-        return dic[side[0]]["val"]
+        print ("size < 2")
+        if side[0] == "!":
+            return not dic[side[1]]["val"]
+        else:
+            return dic[side[0]]["val"]
+
+def handle_right_side(right, result):
+    index = 0
+    r = list(right)
+    Point = collections.namedtuple('Point', ['x', 'y'])
+    p = Point("", y=False)
+    if right.find("!") == 0:
+        print ("lo")
+        for current, last in zip(r[1:], r):
+            print("current", current)
+            print("last", last)
+            if last == "!":
+                if current.isalpha():
+                    p = Point(current, not result)
+    else:
+        if r[0].isalpha():
+            p = Point(r[0], result)
+    return p
 
 def handleLeftSide(dict, left, right, dic, query):
     i = 0
@@ -170,19 +205,25 @@ def handleLeftSide(dict, left, right, dic, query):
     l = list(left)
     r = list(right)
     result = handleCalc(l, dic, dict)
-    print ("final bef", dic[r[0]]["val"])
-    dic[r[0]]["val"] = result
-    print ("final aft", dic[r[0]]["val"])
+    print ("l", l)
+    print ("r", r)
+    # print ("bef result", dic[r[0]]["val"])
+    # dic[r[0]]["val"] = result
+    p = handle_right_side(right, result)
+    dic[p.x]["val"] = p.y
+    # print ("aft result", dic[r[0]]["val"])
     index += 1
     queryResult(query, dic)
     return dic
 
 def solveQuery(dict, left, right, dic, query):
-    # print ("b")
+    #dict indique la position des queries
     for key in dict:
-        print("hello", dict[key]["right"])
+        #on accede au contenu de la key de dict et il faut deux for pour ça
+        print("dict[key]", dict[key]["right"])
         for value in dict[key]["right"]:
-            print("bonjour", left[value])
+            print("left[value]", left[value])
+            print("right[value]", right[value])
             dic = handleLeftSide(dict, left[value], right[value], dic, query)
     return dic
 
@@ -211,6 +252,7 @@ def main(argv):
     # putLettersToTrue(dic, equal)
     printAll(dicEqu, dic, left, right, equal, query, letterFile, equ, letterLine)
     # determineBool(left, right, dicEqu, dic)
+    #dict indique la position des queries
     dict = findQueryLetter(query, left, right)
     solveQuery(dict, left, right, dic, query)
 
