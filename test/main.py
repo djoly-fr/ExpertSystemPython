@@ -52,6 +52,8 @@ def letterDicValue(equal, letterFile):
             dic[i] = {"letter": i, "val": True, "constant": True}
         else:
             dic[i] = {"letter": i, "val": False, "constant": None}
+    dic["1"] = {"letter": "1", "val": True, "constant": True}
+    dic["0"] = {"letter": "0", "val": False, "constant": True}
     return dic
 
 #pour avoir la position des lettres de la query
@@ -72,7 +74,7 @@ def findQueryLetter(query, left, right):
                     print("non")
                 else:
                     tab.append(i)
-                dict[l] = {"letter": l, "right": tab}
+                    dict[l] = {"letter": l, "right": tab}
             i += 1
     return dict
 
@@ -216,7 +218,91 @@ def handleLeftSide(dict, left, right, dic, query):
     queryResult(query, dic)
     return dic
 
-def solveQuery(dict, left, right, dic, query):
+#fonction qui repond a la query de type B + A => E | F
+def solveQuery(dict, left, right, alphabet, query):
+    Ret = collections.namedtuple('Ret', ['alpha', 'left'])
+    r = Ret(alphabet, left=left)
+    print("query", query)
+    print("left", left)
+    retExp = solveExp(r, dict, left)
+    print("resultat de exp  ",retExp)
+    return r
+
+#fonction recursive qui resout les expression type Q + (A | (D + B) + H) + E
+def solveExp(r, dict, str):
+
+    print("__debut solve __")
+    if str == "0" or str == "1":
+        return str
+    print("r ",r)
+    str = findParanthese(r, dict, str)
+    # left = findExclamation(left, alphabet)
+    str = findAnd(r, dict, str)
+    # left = findOr(left, alphabet)
+    # left = findXor(left, alphabet)
+    print ("_ fin a__")
+    return str #return le string de l exp, a la fin on aura 0 ou 1
+
+def findAnd(r, dict, str):
+    print("__debut and__ ", str)
+    positionOP = str.find('+')
+    if positionOP == -1:
+        return str
+    letter1 = str[positionOP - 1]
+    letter2 = str[positionOP + 1]
+    print("letter1", letter1 )
+    print("bool" , r.alpha[letter1]['val'])
+    result =  r.alpha[letter1]["val"] and r.alpha[letter2]["val"]
+    print("result ", result)
+    if result == True:
+        result = "1"
+    else:
+        result = "0"
+    sub = str.replace(letter1+"+"+letter2, result, 1)
+    #sub = str[:letter1]+result+str[letter2]
+    print("sub" , sub)
+    newstr = solveExp(r, dict, sub)
+    print("newstr" , newstr)
+    return newstr
+
+
+
+def findParanthese(r, dict, str):
+    position1 = str.find('(')
+    if position1 == -1:
+        return str
+    tmp = 1
+    lenght = len(str)
+    print("len" , lenght)
+    i = position1 + 1
+    print("i" , i)
+    print("str", str)
+    position2 = 0
+    while(i < lenght):
+        print("str[i]", str[i])
+        print("tmp", tmp)
+        if str[i] == '(':
+            tmp += 1
+        elif str[i] == ')' and tmp == 1:
+            position2 = i
+            break
+        elif str[i] == ')' and tmp != 1:
+            tmp -= 1
+        i += 1
+    print("position2", position2)
+    sub = str[position1+1:position2]
+    print("sub ", sub)
+    ret = solveExp(r, dict, sub)
+    newstr = str.replace("("+sub+")", ret, 1)
+    print("printstr" , newstr)
+    return newstr
+
+def parseQuery(dict, left, right, alphabet, query):
+
+
+
+    print("dict " , dict)
+
     #dict indique la position des queries
     for key in dict:
         #on accede au contenu de la key de dict et il faut deux for pour ça
@@ -224,8 +310,11 @@ def solveQuery(dict, left, right, dic, query):
         for value in dict[key]["right"]:
             print("left[value]", left[value])
             print("right[value]", right[value])
-            dic = handleLeftSide(dict, left[value], right[value], dic, query)
-    return dic
+            #alphabet = solveQuery(alphabet, left, right, value,  )
+
+            alphabet = solveQuery(dict, left[value], right[value], alphabet, query)
+            #alphabet = handleLeftSide(dict, left[value], right[value], alphabet, query)
+    return alphabet
 
 def main(argv):
     file = open(argv[0], 'r')
@@ -254,7 +343,8 @@ def main(argv):
     # determineBool(left, right, dicEqu, dic)
     #dict indique la position des queries
     dict = findQueryLetter(query, left, right)
-    solveQuery(dict, left, right, dic, query)
+
+    parseQuery(dict, left, right, dic, query)
 
 if __name__ == "__main__":
     main(sys.argv[1:])
