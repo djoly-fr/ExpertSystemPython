@@ -184,6 +184,7 @@ def parseRightLetter(letter, left, right, r):
     for line in tab:
         r = Ret(r.alpha, left=left[line])
         r = solveQuery(dict, left[line], right[line], r.alpha, line)
+        right
     # print ("CCCCCJJJDJDSNVLSDNVLDLKVNDFLNVKFDNVKLF")
     return r
 
