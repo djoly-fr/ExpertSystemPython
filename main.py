@@ -57,7 +57,7 @@ def letterDicValue(equal, letterFile):
         if equal[0].find(i) != -1:
             dic[i] = {"letter": i, "val": True, "constant": True}
         else:
-            dic[i] = {"letter": i, "val": False, "constant": None}
+            dic[i] = {"letter": i, "val": False, "constant": False}
     dic["1"] = {"letter": "1", "val": True, "constant": True}
     dic["0"] = {"letter": "0", "val": False, "constant": True}
     return dic
@@ -120,11 +120,12 @@ def queryResult(query, dic):
 #fonction qui repond a la query de type B + A => E | F
 def solveQuery(dict, left, right, alphabet, value):
     Ret = collections.namedtuple('Ret', ['alpha', 'left'])
-    r = Ret(alphabet, left=left)
+    r = Ret(alphabet, left=left[value])
     print("left", left)
-    if len(left) > 1:
-        retExp = solveExp(r, dict, left)
+    if len(left[value]) > 1:
+        retExp = solveExp(r, dict, left[value], left, right)
     else:
+        # print("left0", left[0])
         if alphabet[left[0]]["val"] == True:
             retExp = "1"
         else:
@@ -134,19 +135,19 @@ def solveQuery(dict, left, right, alphabet, value):
     return r
 
 #fonction recursive qui resout les expression type Q + (A | (D + B) + H) + E
-def solveExp(r, dict, str):
+def solveExp(r, dict, str, left, right):
     print("__debut solve __")
     if str == "0" or str == "1":
         return str
     print("r ",r)
-    str = fr.findParanthese(r, dict, str)
-    str = fr.findExclamation(r, dict, str)
-    str = fr.findAnd(r, dict, str)
-    str = fr.findOr(r, dict, str)
-    str = fr.findXor(r, dict, str)
+    str = fr.findParanthese(r, dict, str, left, right)
+    str = fr.findExclamation(r, dict, str, left, right)
+    str = fr.findAnd(r, dict, str, left, right)
+    str = fr.findOr(r, dict, str, left, right)
+    str = fr.findXor(r, dict, str, left, right)
     return str #return le string de l exp, a la fin on aura 0 ou 1
 
-#bruteforce il teste True, apres False
+#bruteforce pour le coté droit, il teste True, apres False
 def solveRightSide(dict, left, right, alphabet, value):
     Ret = collections.namedtuple('Ret', ['alpha', 'left'])
     r = Ret(alphabet, left=left)
@@ -154,18 +155,18 @@ def solveRightSide(dict, left, right, alphabet, value):
     if len(right) > 1:
         alphabet[value]["val"] = True
         r = Ret(alphabet, left=left)
-        str = solveExp(r, dict, right)
+        str = solveExp(r, dict, right, left, right)
         if str != left:
             alphabet[value]["val"] = False
             r = Ret(alphabet, left=left)
-            str = solveExp(r, dict, right)
+            str = solveExp(r, dict, right, left, right)
             if str != left:
                 alphabet[value]["val"] = None
                 r = Ret(alphabet, left=left)
         else:
             alphabet[value]["val"] = False
             r = Ret(alphabet, left=left)
-            str = solveExp(r, dict, right)
+            str = solveExp(r, dict, right, left, right)
             if str == left:
                 alphabet[value]["val"] = None
                 r = Ret(alphabet, left=left)
@@ -176,8 +177,17 @@ def solveRightSide(dict, left, right, alphabet, value):
     print ("sorti", value,  alphabet[value]["val"])
     return r
 
+def parseRightLetter(letter, left, right, r):
+    print("___parseRightLetter___", letter)
+    tab = findLetterRightSide(letter, right)
+    Ret = collections.namedtuple('Ret', ['alpha', 'left'])
+    for line in tab:
+        r = Ret(r.alpha, left=left[line])
+        r = solveQuery(dict, left[line], right[line], r.alpha, line)
+    # print ("CCCCCJJJDJDSNVLSDNVLDLKVNDFLNVKFDNVKLF")
+    return r
+
 def parseQuery(dict, left, right, alphabet, query):
-    print("dict " , dict)
     Ret = collections.namedtuple('Ret', ['alpha', 'left'])
     #dict indique la position des queries
     for key in dict:
@@ -188,7 +198,7 @@ def parseQuery(dict, left, right, alphabet, query):
             print("right[value]", right[value])
             r = Ret(alphabet, left=left[value])
             #alphabet = solveQuery(alphabet, left, right, value,  )
-            r = solveQuery(dict, left[value], right[value], alphabet, value)
+            r = solveQuery(dict, left, right, alphabet, value)
             left[value] = r.left
             solveRightSide(dict, left[value], right[value], alphabet, key)
             #alphabet = handleLeftSide(dict, left[value], right[value], alphabet, query)
@@ -219,7 +229,6 @@ def main(argv):
     # determineBool(left, right, dicEqu, dic)
     #dict indique la position des queries
     dict = findQueryLetter(query, left, right)
-
     parseQuery(dict, left, right, dic, query)
 
 if __name__ == "__main__":
