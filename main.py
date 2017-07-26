@@ -153,27 +153,38 @@ def solveRightSide(dict, left, right, alphabet, value):
     r = Ret(alphabet, left=left)
     print ("+++++++++++entré+++++++++++", value, alphabet[value]["val"])
     if len(right) > 1:
+        print("_____1______")
         alphabet[value]["val"] = True
         r = Ret(alphabet, left=left)
         str = solveExp(r, dict, right, left, right)
         if str != left:
+            print("_____2______")
             alphabet[value]["val"] = False
             r = Ret(alphabet, left=left)
             str = solveExp(r, dict, right, left, right)
             if str != left:
+                print("_____3______")
                 alphabet[value]["val"] = None
                 r = Ret(alphabet, left=left)
         else:
+            print("_____4______")
             alphabet[value]["val"] = False
             r = Ret(alphabet, left=left)
             str = solveExp(r, dict, right, left, right)
             if str == left:
+                print("_____5______")
                 alphabet[value]["val"] = None
                 r = Ret(alphabet, left=left)
             else:
                 alphabet[value]["val"] = True
                 r = Ret(alphabet, left=left)
                 # str = solveExp(r, dict, right)
+    else:
+        if left == "1":
+            alphabet[value]["val"] = True
+        else:
+            alphabet[value]["val"] = False
+    alphabet[value]["constant"] = True
     print ("sorti", value,  alphabet[value]["val"])
     return r
 
@@ -181,10 +192,13 @@ def parseRightLetter(letter, left, right, r):
     print("___parseRightLetter___", letter)
     tab = findLetterRightSide(letter, right)
     Ret = collections.namedtuple('Ret', ['alpha', 'left'])
+    print(tab)
     for line in tab:
         r = Ret(r.alpha, left=left[line])
         r = solveQuery(dict, left[line], right[line], r.alpha, line)
-        right
+        left[line] = r.left
+        print ("rightletter", left, left[line])
+        r = solveRightSide({}, left[line], right[line], r.alpha, letter)
     # print ("CCCCCJJJDJDSNVLSDNVLDLKVNDFLNVKFDNVKLF")
     return r
 

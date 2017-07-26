@@ -13,10 +13,8 @@ def findAnd(r, dict, str, left, right):
     letter2 = str[positionOP + 1]
     print("letter1", letter1, r.alpha[letter1]["constant"])
     if r.alpha[letter1]["constant"] == False:
-        print ("letterLine1", letter1)
         r = parseRightLetter(letter1, left, right, r)
     if r.alpha[letter2]["constant"] == False:
-        print ("letterLine2")
         r = parseRightLetter(letter2, left, right, r)
     print("bool" , r.alpha[letter1]['val'])
     result =  r.alpha[letter1]["val"] and r.alpha[letter2]["val"]
