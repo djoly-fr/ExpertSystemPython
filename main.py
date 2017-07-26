@@ -24,14 +24,8 @@ def or_rule(a, b):
     print("or", a, b, a or b)
     return (a or b)
 
-def letterForEachLine(file):
-    # tableau tous les lettre pour chaque ligne
-    letterLine = []
-    file_content = file.split('\n')
-    for lines in file_content[0:]:
-        reg = re.findall("[A-Z]", lines)
-        letterLine.append(reg)
-    return letterLine
+def not_rule(a):
+    return (not a)
 
 def implicationDic(equ):
     # dictionnaire des implications True => ou false <=>
@@ -44,6 +38,15 @@ def implicationDic(equ):
             dic[index] = {"equ": i, "val": False}
         index += 1
     return dic
+
+def letterForEachLine(file):
+    # tableau tous les lettre pour chaque ligne
+    letterLine = []
+    file_content = file.split('\n')
+    for lines in file_content[0:]:
+        reg = re.findall("[A-Z]", lines)
+        letterLine.append(reg)
+    return letterLine
 
 def letterDicValue(equal, letterFile):
     # dictionnaire des lettres avec leurs valeurs
@@ -81,6 +84,15 @@ def findQueryLetter(query, left, right):
             i += 1
     return dict
 
+def findLetterRightSide(letter, right):
+    tab = []
+    i = 0
+    for r in right:
+        if letter in r:
+            tab.append(i)
+        i += 1
+    return tab
+
 def printAll(dicEqu, dic, left, right, equal, query, letterFile, equ, letterLine):
     print ("dicEqu", dicEqu)
     print ("left", left)
@@ -97,7 +109,6 @@ def queryResult(query, dic):
     q = list(query[0])
     tmp = None
     for q in q:
-        # print (q)
         tmp = dic[q]["val"]
         if (tmp == None):
             print (q, "is undetermined")
@@ -106,36 +117,24 @@ def queryResult(query, dic):
         else:
             print (q, "is False")
 
-def not_rule(a):
-    return (not a)
-
-
-#je regarde si c'est superieur à deux caractères
-def handleCalc(side, dic, dict):
-    size = len(side)
-    if size > 2:
-        print ("size >2 ")
-        return handleOperation(side, dic, dict)
-    elif size <= 2:
-        print ("size < 2")
-        if side[0] == "!":
-            return not dic[side[1]]["val"]
-        else:
-            return dic[side[0]]["val"]
-
 #fonction qui repond a la query de type B + A => E | F
-def solveQuery(dict, left, right, alphabet, query):
+def solveQuery(dict, left, right, alphabet, value):
     Ret = collections.namedtuple('Ret', ['alpha', 'left'])
     r = Ret(alphabet, left=left)
-    print("query", query)
     print("left", left)
-    retExp = solveExp(r, dict, left)
+    if len(left) > 1:
+        retExp = solveExp(r, dict, left)
+    else:
+        if alphabet[left[0]]["val"] == True:
+            retExp = "1"
+        else:
+            retExp = "0"
     print("resultat de exp  ",retExp)
+    r = Ret(alphabet, left=retExp)
     return r
 
 #fonction recursive qui resout les expression type Q + (A | (D + B) + H) + E
 def solveExp(r, dict, str):
-
     print("__debut solve __")
     if str == "0" or str == "1":
         return str
@@ -145,12 +144,41 @@ def solveExp(r, dict, str):
     str = fr.findAnd(r, dict, str)
     str = fr.findOr(r, dict, str)
     str = fr.findXor(r, dict, str)
-    print ("_ fin a__", str)
     return str #return le string de l exp, a la fin on aura 0 ou 1
+
+#bruteforce il teste True, apres False
+def solveRightSide(dict, left, right, alphabet, value):
+    Ret = collections.namedtuple('Ret', ['alpha', 'left'])
+    r = Ret(alphabet, left=left)
+    print ("+++++++++++entré+++++++++++", value, alphabet[value]["val"])
+    if len(right) > 1:
+        alphabet[value]["val"] = True
+        r = Ret(alphabet, left=left)
+        str = solveExp(r, dict, right)
+        if str != left:
+            alphabet[value]["val"] = False
+            r = Ret(alphabet, left=left)
+            str = solveExp(r, dict, right)
+            if str != left:
+                alphabet[value]["val"] = None
+                r = Ret(alphabet, left=left)
+        else:
+            alphabet[value]["val"] = False
+            r = Ret(alphabet, left=left)
+            str = solveExp(r, dict, right)
+            if str == left:
+                alphabet[value]["val"] = None
+                r = Ret(alphabet, left=left)
+            else:
+                alphabet[value]["val"] = True
+                r = Ret(alphabet, left=left)
+                # str = solveExp(r, dict, right)
+    print ("sorti", value,  alphabet[value]["val"])
+    return r
 
 def parseQuery(dict, left, right, alphabet, query):
     print("dict " , dict)
-
+    Ret = collections.namedtuple('Ret', ['alpha', 'left'])
     #dict indique la position des queries
     for key in dict:
         #on accede au contenu de la key de dict et il faut deux for pour ça
@@ -158,9 +186,11 @@ def parseQuery(dict, left, right, alphabet, query):
         for value in dict[key]["right"]:
             print("left[value]", left[value])
             print("right[value]", right[value])
+            r = Ret(alphabet, left=left[value])
             #alphabet = solveQuery(alphabet, left, right, value,  )
-
-            alphabet = solveQuery(dict, left[value], right[value], alphabet, query)
+            r = solveQuery(dict, left[value], right[value], alphabet, value)
+            left[value] = r.left
+            solveRightSide(dict, left[value], right[value], alphabet, key)
             #alphabet = handleLeftSide(dict, left[value], right[value], alphabet, query)
     return alphabet
 
@@ -170,13 +200,11 @@ def main(argv):
     file2 = regex.sub("", file.read())
     file2 = file2.replace(" ", "")
     print(file2)
-    left = re.findall(".*[A-Z]\s*(?=\=>)|.*[A-Z]\s*(?=<\=>)", file2)
+    left = re.findall(".*[A-Z()!]\s*(?=\=>)|.*[A-Z]\s*(?=<\=>)", file2)
     right = re.findall("(?<=\=>).*[A-Z]\s*(?=\n)|(?<=<\=>).*[A-Z]\s*(?=\n)", file2)
     equ = re.findall("=>|<=>", file2)
     equal = re.findall("(?<=\n=).*", file2)
     query = re.findall("(?<=\n\?).*", file2)
-    #pour split le string en lettre
-    # equal = list(equal[0])
     # tableau tous les lettre pour chaque ligne
     letterLine = letterForEachLine(file2)
     #toutes lettre du fichier avec doublon
