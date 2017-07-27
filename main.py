@@ -196,6 +196,7 @@ def parseRightLetter(letter, left, right, r):
     for line in tab:
         r = Ret(r.alpha, left=left[line])
         r = solveQuery(dict, left[line], right[line], r.alpha, line)
+        print("loveleft", r.left)
         left[line] = r.left
         print ("rightletter", left, left[line])
         r = solveRightSide({}, left[line], right[line], r.alpha, letter)
@@ -217,6 +218,7 @@ def parseQuery(dict, left, right, alphabet, query):
             left[value] = r.left
             solveRightSide(dict, left[value], right[value], alphabet, key)
             #alphabet = handleLeftSide(dict, left[value], right[value], alphabet, query)
+            queryResult(query, alphabet)
     return alphabet
 
 def main(argv):
