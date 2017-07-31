@@ -37,11 +37,13 @@ def impl(a):
         return (None)
 
 def xor_rule(a, b):
-    logger.debug("xor", a, b, (a and not b) or (not a and b))
+    ret = (a and not b) or (not a and b)
+    logger.debug("xor{} {} {} ".format( a, b, ret))
     return ((a and not b) or (not a and b))
 
 def or_rule(a, b):
-    logger.debug("or", a, b, a or b)
+    ret = a or b
+    logger.debug("or {} {} {} ".format(a, b, ret))
     return (a or b)
 
 def not_rule(a):
