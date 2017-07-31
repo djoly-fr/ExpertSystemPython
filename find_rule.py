@@ -3,7 +3,7 @@ import sys
 import collections
 from main import *
 
-def findAnd(r, dict, currentLine, leftTab, rightTab):
+def findAnd(r, dict, currentLine, leftTab, rightTab, lineTab):
     print("__debut and__ ", currentLine)
     print("YYYYYYY", r)
     positionOP = currentLine.find('+')
@@ -13,9 +13,9 @@ def findAnd(r, dict, currentLine, leftTab, rightTab):
     letter2 = currentLine[positionOP + 1]
     print("letter1", letter1, r.alpha[letter1]["constant"])
     if r.alpha[letter1]["constant"] == False:
-        r = parseRightLetter(letter1, leftTab, rightTab, r)
+        r = parseRightLetter(letter1, leftTab, rightTab, r, lineTab)
     if r.alpha[letter2]["constant"] == False:
-        r = parseRightLetter(letter2, leftTab, rightTab, r)
+        r = parseRightLetter(letter2, leftTab, rightTab, r, lineTab)
     print("bool" , r.alpha[letter1]['val'])
     result =  r.alpha[letter1]["val"] and r.alpha[letter2]["val"]
     print("result ", result)
@@ -26,11 +26,11 @@ def findAnd(r, dict, currentLine, leftTab, rightTab):
     sub = currentLine.replace(letter1+"+"+letter2, result, 1)
     #sub = str[:letter1]+result+str[letter2]
     print("sub" , sub)
-    newstr = solveExp(r, dict, sub, leftTab, rightTab)
+    newstr = solveExp(r, dict, sub, leftTab, rightTab, lineTab)
     print("newstr" , newstr)
     return newstr
 
-def findExclamation(r, dict, currentLine, leftTab, rightTab):
+def findExclamation(r, dict, currentLine, leftTab, rightTab, lineTab):
     print("__debut exclamation__ ", currentLine)
     positionOP = currentLine.find('!')
     if positionOP == -1:
@@ -39,7 +39,7 @@ def findExclamation(r, dict, currentLine, leftTab, rightTab):
     print("letter1", letter)
     print("bool" , r.alpha[letter]['val'])
     if r.alpha[letter]["constant"] == False:
-        r = parseRightLetter(letter, leftTab, rightTab, r)
+        r = parseRightLetter(letter, leftTab, rightTab, r, lineTab)
     result = not r.alpha[letter]["val"]
     print("result ", result)
     if result == True:
@@ -49,11 +49,11 @@ def findExclamation(r, dict, currentLine, leftTab, rightTab):
     sub = currentLine.replace("!"+letter, result, 1)
     #sub = str[:letter1]+result+str[letter2]
     print("sub" , sub)
-    newstr = solveExp(r, dict, sub, leftTab, rightTab)
+    newstr = solveExp(r, dict, sub, leftTab, rightTab, lineTab)
     print("newstr" , newstr)
     return newstr
 
-def findOr(r, dict, currentLine, leftTab, rightTab):
+def findOr(r, dict, currentLine, leftTab, rightTab, lineTab):
     print("__debut Or__ ", currentLine)
     positionOP = currentLine.find('|')
     if positionOP == -1:
@@ -63,10 +63,10 @@ def findOr(r, dict, currentLine, leftTab, rightTab):
     print("letter1", letter1 )
     if r.alpha[letter1]["constant"] == False:
         print ("letterLine1", letter1)
-        r = parseRightLetter(letter1, leftTab, rightTab, r)
+        r = parseRightLetter(letter1, leftTab, rightTab, r, lineTab)
     if r.alpha[letter2]["constant"] == False:
         print ("letterLine2")
-        r = parseRightLetter(letter2, leftTab, rightTab, r)
+        r = parseRightLetter(letter2, leftTab, rightTab, r, lineTab)
     print("bool" , r.alpha[letter1]['val'])
     print("bool" , r.alpha[letter1]['val'])
     result = or_rule(r.alpha[letter1]["val"], r.alpha[letter2]["val"])
@@ -78,11 +78,11 @@ def findOr(r, dict, currentLine, leftTab, rightTab):
     sub = currentLine.replace(letter1+"|"+letter2, result, 1)
     #sub = str[:letter1]+result+str[letter2]
     print("sub" , sub)
-    newstr = solveExp(r, dict, sub, leftTab, rightTab)
+    newstr = solveExp(r, dict, sub, leftTab, rightTab, lineTab)
     print("newstr" , newstr)
     return newstr
 
-def findXor(r, dict, currentLine, leftTab, rightTab):
+def findXor(r, dict, currentLine, leftTab, rightTab, lineTab):
     print("__debut xor__ ", currentLine)
     positionOP = currentLine.find('^')
     if positionOP == -1:
@@ -92,10 +92,10 @@ def findXor(r, dict, currentLine, leftTab, rightTab):
     print("letter1", letter1 )
     if r.alpha[letter1]["constant"] == False:
         print ("letterLine1", letter1)
-        r = parseRightLetter(letter1, leftTab, rightTab, r)
+        r = parseRightLetter(letter1, leftTab, rightTab, r, lineTab)
     if r.alpha[letter2]["constant"] == False:
         print ("letterLine2")
-        r = parseRightLetter(letter2, leftTab, rightTab, r)
+        r = parseRightLetter(letter2, leftTab, rightTab, r, lineTab)
     print("bool" , r.alpha[letter1]['val'])
     print("bool" , r.alpha[letter1]['val'])
     result = xor_rule(r.alpha[letter1]["val"], r.alpha[letter2]["val"])
@@ -107,11 +107,11 @@ def findXor(r, dict, currentLine, leftTab, rightTab):
     sub = currentLine.replace(letter1+"^"+letter2, result, 1)
     #sub = str[:letter1]+result+str[letter2]
     print("sub" , sub)
-    newstr = solveExp(r, dict, sub, leftTab, rightTab)
+    newstr = solveExp(r, dict, sub, leftTab, rightTab, lineTab)
     print("newstr" , newstr)
     return newstr
 
-def findParanthese(r, dict, currentLine, leftTab, rightTab):
+def findParanthese(r, dict, currentLine, leftTab, rightTab, lineTab):
     print('str dans find paranthese ', currentLine)
     position1 = currentLine.find('(')
     if position1 == -1:
@@ -137,7 +137,7 @@ def findParanthese(r, dict, currentLine, leftTab, rightTab):
     print("position2", position2)
     sub = currentLine[position1+1:position2]
     print("sub ", sub)
-    ret = solveExp(r, dict, sub, leftTab, rightTab)
+    ret = solveExp(r, dict, sub, leftTab, rightTab, lineTab)
     newstr = currentLine.replace("("+sub+")", ret, 1)
     print("printstr" , newstr)
     return newstr

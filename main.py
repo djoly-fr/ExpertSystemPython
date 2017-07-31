@@ -118,17 +118,15 @@ def queryResult(query, dic):
             print (q, "is False")
 
 #fonction qui repond a la query de type B + A => E | F
-#
-def solveQuery(dict, leftTab, rightTab, alphabet, line):
+def solveQuery(dict, leftTab, rightTab, alphabet, line, lineTab):
     Ret = collections.namedtuple('Ret', ['alpha', 'left'])
     print('dans SolveQuery')
     print("left", leftTab , "value ", line)
     r = Ret(alphabet, left=leftTab[line])
     print("left", leftTab)
     if len(leftTab[line]) > 1:
-        retExp = solveExp(r, dict, leftTab[line], leftTab, rightTab)
+        retExp = solveExp(r, dict, leftTab[line], leftTab, rightTab, lineTab)
     else:
-        # print("left0", left[0])
         if alphabet[leftTab[0]]["val"] == True:
             retExp = "1"
         else:
@@ -138,40 +136,35 @@ def solveQuery(dict, leftTab, rightTab, alphabet, line):
     return r
 
 #fonction recursive qui resout les expression type Q + (A | (D + B) + H) + E
-#
-def solveExp(r, dict, currentLine, leftTab, rightTab):
+def solveExp(r, dict, currentLine, leftTab, rightTab, lineTab):
     print("__debut solve __")
     if currentLine == "0" or currentLine == "1":
         return currentLine
     print("r ",r)
-    currentLine = fr.findParanthese(r, dict, currentLine, leftTab, rightTab)
-    currentLine = fr.findExclamation(r, dict, currentLine, leftTab, rightTab)
-    currentLine = fr.findAnd(r, dict, currentLine, leftTab, rightTab)
-    currentLine = fr.findOr(r, dict, currentLine, leftTab, rightTab)
-    currentLine = fr.findXor(r, dict, currentLine, leftTab, rightTab)
+    currentLine = fr.findParanthese(r, dict, currentLine, leftTab, rightTab, lineTab)
+    currentLine = fr.findExclamation(r, dict, currentLine, leftTab, rightTab, lineTab)
+    currentLine = fr.findAnd(r, dict, currentLine, leftTab, rightTab, lineTab)
+    currentLine = fr.findOr(r, dict, currentLine, leftTab, rightTab, lineTab)
+    currentLine = fr.findXor(r, dict, currentLine, leftTab, rightTab, lineTab)
     return currentLine   #return le string de l exp, a la fin on aura 0 ou 1
 
 #bruteforce pour le coté droit, il teste True, apres False
-# ? left
-def solveRightSide(dict, leftTab, rightTab, alphabet, line, letter):
+def solveRightSide(dict, leftTab, rightTab, alphabet, line, letter, lineTab):
     Ret = collections.namedtuple('Ret', ['alpha', 'left'])
     print ("+++++++++++entré+++++++++++", line, alphabet[letter]["val"])
     print("leftTab", leftTab)
     r = Ret(alphabet, left=leftTab[line])
     print ("+++++++++++entré+++++++++++", line, alphabet[letter]["val"])
-    #print ()
     if len(rightTab[line]) > 1:
         print("_____1______")
         alphabet[letter]["val"] = True
         r = Ret(alphabet, left=leftTab[line])
-        # print('AAAAAAAA' , right)
-        # print('value ', value)
-        str = solveExp(r, dict, rightTab[line], leftTab, rightTab)
+        str = solveExp(r, dict, rightTab[line], leftTab, rightTab, lineTab)
         if str != leftTab[line]:
             print("_____2______")
             alphabet[letter]["val"] = False
             r = Ret(alphabet, left=leftTab[line])
-            str = solveExp(r, dict, rightTab[line], leftTab, rightTab)
+            str = solveExp(r, dict, rightTab[line], leftTab, rightTab, lineTab)
             if str != leftTab[line]:
                 print("_____3______")
                 alphabet[letter]["val"] = None
@@ -180,7 +173,7 @@ def solveRightSide(dict, leftTab, rightTab, alphabet, line, letter):
             print("_____4______")
             alphabet[letter]["val"] = False
             r = Ret(alphabet, left=leftTab[line])
-            str = solveExp(r, dict, rightTab[line], leftTab, rightTab)
+            str = solveExp(r, dict, rightTab[line], leftTab, rightTab, lineTab)
             if str == leftTab[line]:
                 print("_____5______")
                 alphabet[letter]["val"] = None
@@ -188,7 +181,6 @@ def solveRightSide(dict, leftTab, rightTab, alphabet, line, letter):
             else:
                 alphabet[letter]["val"] = True
                 r = Ret(alphabet, left=leftTab[line])
-                # str = solveExp(r, dict, right)
     else:
         if leftTab[line] == "1":
             alphabet[letter]["val"] = True
@@ -198,46 +190,43 @@ def solveRightSide(dict, leftTab, rightTab, alphabet, line, letter):
     print ("sorti", line,  alphabet[letter]["val"])
     return r
 
-def parseRightLetter(letter, leftTab, rightTab, r):
+def parseRightLetter(letter, leftTab, rightTab, r, lineTab):
     print("___parseRightLetter___", letter)
     tab = findLetterRightSide(letter, rightTab)
     Ret = collections.namedtuple('Ret', ['alpha', 'left'])
     print(tab)
     for line in tab:
-        r = Ret(r.alpha, left=leftTab[line])
-        r = solveQuery(dict, leftTab, rightTab, r.alpha, line)
-        # print("loveleft", r.left)
-        # print(left[line])
-        # print(left)
-        # print(tab)
-
-        leftTab[line] = r.left
-        #print ("rightletter", left, left[line])
-        r = solveRightSide({}, leftTab, rightTab, r.alpha, line, letter)
-    # print ("CCCCCJJJDJDSNVLSDNVLDLKVNDFLNVKFDNVKLF")
+        if lineTab[line] == False:
+            r = Ret(r.alpha, left=leftTab[line])
+            r = solveQuery(dict, leftTab, rightTab, r.alpha, line, lineTab)
+            leftTab[line] = r.left
+            lineTab[line] = True
+            r = solveRightSide({}, leftTab, rightTab, r.alpha, line, letter, lineTab)
     return r
 
 #dict : dict des lettres avec les lignes
 #leftTab
 #rightTab
 #alphabet : dict des letter avec leur valeur et constant ou non
-def parseQuery(dict, leftTab, rightTab, alphabet, queryTab):
+def parseQuery(dict, leftTab, rightTab, alphabet, queryTab, lineTab):
     Ret = collections.namedtuple('Ret', ['alpha', 'left'])
     #dict indique la position des queries
     for letter in dict:
         #on accede au contenu de la key de dict et il faut deux for pour ça
         print("dict[letter]", dict[letter]["right"])
         for line in dict[letter]["right"]:
-            print('value', line)
-            print("left[line]", leftTab[line])
-            print("right[line]", rightTab[line])
-            r = Ret(alphabet, left=leftTab[line])
-            #alphabet = solveQuery(alphabet, left, right, value,  )
-            r = solveQuery(dict, leftTab, rightTab, alphabet, line)
-            leftTab[line] = r.left
-            solveRightSide(dict, leftTab, rightTab, alphabet, line, letter)
-            #alphabet = handleLeftSide(dict, left[value], right[value], alphabet, query)
-            queryResult(queryTab, alphabet)
+            if lineTab[line] == False:
+                print('value', line)
+                print("left[line]", leftTab[line])
+                print("right[line]", rightTab[line])
+                r = Ret(alphabet, left=leftTab[line])
+                #alphabet = solveQuery(alphabet, left, right, value,  )
+                r = solveQuery(dict, leftTab, rightTab, alphabet, line, lineTab)
+                leftTab[line] = r.left
+                lineTab[line] = True
+                solveRightSide(dict, leftTab, rightTab, alphabet, line, letter, lineTab)
+                #alphabet = handleLeftSide(dict, left[value], right[value], alphabet, query)
+    queryResult(queryTab, alphabet)
     return alphabet
 
 def main(argv):
@@ -253,6 +242,9 @@ def main(argv):
     queryTab = re.findall("(?<=\n\?).*", file2)
     # tableau tous les lettre pour chaque ligne
     letterLine = letterForEachLine(file2)
+    # print letterLine
+    #tableau de booleen pour chaque ligne vu, True ou False
+    lineTab = [False] * len(letterLine)
     #toutes lettre du fichier avec doublon
     letterFile = []
     letterFile = re.findall("[A-Z]", file2)
@@ -265,7 +257,7 @@ def main(argv):
     # determineBool(left, right, dicEqu, dic)
     #dict indique la position des queries
     dict = findQueryLetter(queryTab, leftTab, rightTab)
-    parseQuery(dict, leftTab, rightTab, dic, queryTab)
+    parseQuery(dict, leftTab, rightTab, dic, queryTab, lineTab)
 
 if __name__ == "__main__":
     main(sys.argv[1:])
