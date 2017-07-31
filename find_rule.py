@@ -2,130 +2,132 @@ import re
 import sys
 import collections
 from main import *
+import log
+
 
 def findAnd(r, dict, currentLine, leftTab, rightTab, lineTab):
-    print("__debut and__ ", currentLine)
-    print("YYYYYYY", r)
+    logger.debug("__debut and__  {}".format(currentLine))
+    logger.debug("YYYYYYY {}".format( r))
     positionOP = currentLine.find('+')
     if positionOP == -1:
         return currentLine
     letter1 = currentLine[positionOP - 1]
     letter2 = currentLine[positionOP + 1]
-    print("letter1", letter1, r.alpha[letter1]["constant"])
+    logger.debug("letter1 {} {}".format(letter1, r.alpha[letter1]["constant"]))
     if r.alpha[letter1]["constant"] == False:
         r = parseRightLetter(letter1, leftTab, rightTab, r, lineTab)
     if r.alpha[letter2]["constant"] == False:
         r = parseRightLetter(letter2, leftTab, rightTab, r, lineTab)
-    print("bool" , r.alpha[letter1]['val'])
+    logger.debug("bool {}".format(r.alpha[letter1]['val']))
     result =  r.alpha[letter1]["val"] and r.alpha[letter2]["val"]
-    print("result ", result)
+    logger.debug("result {}".format( result))
     if result == True:
         result = "1"
     else:
         result = "0"
     sub = currentLine.replace(letter1+"+"+letter2, result, 1)
     #sub = str[:letter1]+result+str[letter2]
-    print("sub" , sub)
+    logger.debug("sub {}".format(sub))
     newstr = solveExp(r, dict, sub, leftTab, rightTab, lineTab)
-    print("newstr" , newstr)
+    logger.debug("newstr {}".format(newstr))
     return newstr
 
 def findExclamation(r, dict, currentLine, leftTab, rightTab, lineTab):
-    print("__debut exclamation__ ", currentLine)
+    logger.debug("__debut exclamation__  {}".format(currentLine))
     positionOP = currentLine.find('!')
     if positionOP == -1:
         return currentLine
     letter = currentLine[positionOP + 1]
-    print("letter1", letter)
-    print("bool" , r.alpha[letter]['val'])
+    logger.debug("letter1 {}".format(letter))
+    logger.debug("bool {}".format( r.alpha[letter]['val']))
     if r.alpha[letter]["constant"] == False:
         r = parseRightLetter(letter, leftTab, rightTab, r, lineTab)
     result = not r.alpha[letter]["val"]
-    print("result ", result)
+    logger.debug("result  {}".format( result))
     if result == True:
         result = "1"
     else:
         result = "0"
     sub = currentLine.replace("!"+letter, result, 1)
     #sub = str[:letter1]+result+str[letter2]
-    print("sub" , sub)
+    logger.debug("sub {}".format( sub))
     newstr = solveExp(r, dict, sub, leftTab, rightTab, lineTab)
-    print("newstr" , newstr)
+    logger.debug("newstr {}".format(newstr))
     return newstr
 
 def findOr(r, dict, currentLine, leftTab, rightTab, lineTab):
-    print("__debut Or__ ", currentLine)
+    logger.debug("__debut Or__  {}".format( currentLine))
     positionOP = currentLine.find('|')
     if positionOP == -1:
         return currentLine
     letter1 = currentLine[positionOP - 1]
     letter2 = currentLine[positionOP + 1]
-    print("letter1", letter1 )
+    logger.debug("letter1 {}".format(letter1 ))
     if r.alpha[letter1]["constant"] == False:
         print ("letterLine1", letter1)
         r = parseRightLetter(letter1, leftTab, rightTab, r, lineTab)
     if r.alpha[letter2]["constant"] == False:
         print ("letterLine2")
         r = parseRightLetter(letter2, leftTab, rightTab, r, lineTab)
-    print("bool" , r.alpha[letter1]['val'])
-    print("bool" , r.alpha[letter1]['val'])
+    logger.debug("bool {}".format(r.alpha[letter1]['val']))
+    logger.debug("bool {}".format(r.alpha[letter1]['val']))
     result = or_rule(r.alpha[letter1]["val"], r.alpha[letter2]["val"])
-    print("result ", result)
+    logger.debug("result  {}".format( result))
     if result == True:
         result = "1"
     else:
         result = "0"
     sub = currentLine.replace(letter1+"|"+letter2, result, 1)
     #sub = str[:letter1]+result+str[letter2]
-    print("sub" , sub)
+    logger.debug("sub {}".format( sub))
     newstr = solveExp(r, dict, sub, leftTab, rightTab, lineTab)
-    print("newstr" , newstr)
+    logger.debug("newstr {}".format( newstr))
     return newstr
 
 def findXor(r, dict, currentLine, leftTab, rightTab, lineTab):
-    print("__debut xor__ ", currentLine)
+    logger.debug("__debut xor__  {}".format( currentLine))
     positionOP = currentLine.find('^')
     if positionOP == -1:
         return currentLine
     letter1 = currentLine[positionOP - 1]
     letter2 = currentLine[positionOP + 1]
-    print("letter1", letter1 )
+    logger.debug("letter1 {}".format(letter1 ))
     if r.alpha[letter1]["constant"] == False:
-        print ("letterLine1", letter1)
+        print ("letterLine1 {}".format( letter1))
         r = parseRightLetter(letter1, leftTab, rightTab, r, lineTab)
     if r.alpha[letter2]["constant"] == False:
         print ("letterLine2")
         r = parseRightLetter(letter2, leftTab, rightTab, r, lineTab)
-    print("bool" , r.alpha[letter1]['val'])
-    print("bool" , r.alpha[letter1]['val'])
+    logger.debug("bool {}".format(r.alpha[letter1]['val']))
+    logger.debug("bool {}".format(r.alpha[letter1]['val']))
     result = xor_rule(r.alpha[letter1]["val"], r.alpha[letter2]["val"])
-    print("result ", result)
+    logger.debug("result {}".format( result))
     if result == True:
         result = "1"
     else:
         result = "0"
     sub = currentLine.replace(letter1+"^"+letter2, result, 1)
     #sub = str[:letter1]+result+str[letter2]
-    print("sub" , sub)
+    logger.debug("sub {}".format(sub))
     newstr = solveExp(r, dict, sub, leftTab, rightTab, lineTab)
-    print("newstr" , newstr)
+    logger.debug("newstr {}".format(newstr))
     return newstr
 
 def findParanthese(r, dict, currentLine, leftTab, rightTab, lineTab):
-    print('str dans find paranthese ', currentLine)
+    logger.debug('str dans find paranthese {}'.format(currentLine))
     position1 = currentLine.find('(')
     if position1 == -1:
         return currentLine
     tmp = 1
     lenght = len(currentLine)
-    print("len" , lenght)
+    logger.debug("len {}".format(lenght))
     i = position1 + 1
-    print("i" , i)
-    print("str", currentLine)
+    logger.debug("i {}".format(i))
+    logger.debug("str {}".format(currentLine))
     position2 = 0
     while(i < lenght):
-        print("str[i]", currentLine[i])
-        print("tmp", tmp)
+        logger.debug("str[i] {}".format(currentLine[i]))
+        logger.debug("tmp {}".format(tmp))
         if currentLine[i] == '(':
             tmp += 1
         elif currentLine[i] == ')' and tmp == 1:
@@ -134,10 +136,10 @@ def findParanthese(r, dict, currentLine, leftTab, rightTab, lineTab):
         elif currentLine[i] == ')' and tmp != 1:
             tmp -= 1
         i += 1
-    print("position2", position2)
+    logger.debug("position2 {}".format(position2))
     sub = currentLine[position1+1:position2]
-    print("sub ", sub)
+    logger.debug("sub  {}".format(sub))
     ret = solveExp(r, dict, sub, leftTab, rightTab, lineTab)
     newstr = currentLine.replace("("+sub+")", ret, 1)
-    print("printstr" , newstr)
+    logger.debug("printstr {}".format(newstr))
     return newstr
