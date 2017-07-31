@@ -11,8 +11,8 @@ handler = logging.StreamHandler() #logging.FileHandler("info.log", mode="a", enc
 
 handler.setFormatter(formatter)
 
-# handler.setLevel(logging.DEBUG)
-handler.setLevel(logging.INFO)
+handler.setLevel(logging.DEBUG)
+# handler.setLevel(logging.INFO)
 
 logger = logging.getLogger()
 logger.setLevel(logging.DEBUG)

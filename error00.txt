@@ -9,3 +9,4 @@ Y + C => E
 # by a newline is used
 ?D
 #E                   # Queries : What are G, V and X ?
+#mauvais resultat
