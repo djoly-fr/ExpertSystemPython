@@ -280,11 +280,11 @@ def queryResult(query, dic):
     for q in q:
         tmp = dic[q]["val"]
         if (tmp == None):
-            logger.info("%s is undetermined" % q)
+            logger.info("{} is undetermined".format(q))
         elif (tmp == True):
-            logger.info("%s is True" % q)
+            logger.info("{} is True".format(q))
         else:
-            logger.info("%q is False" % q)
+            logger.info("{} is False".format(q))
 
 
 if __name__ == "__main__":
