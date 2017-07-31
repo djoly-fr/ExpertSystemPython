@@ -27,8 +27,9 @@ import find_rule as fr
 #     logger.addHandler(handler)
 
 def and_rule(a, b):
-    logger.debug("and", a, b, a and b)
-    return (a and b)
+    ret = a and b
+    logger.debug("and {} {} {} ".format(a, b, ret))
+    return ret
 
 def impl(a):
     if a:
@@ -38,7 +39,7 @@ def impl(a):
 
 def xor_rule(a, b):
     ret = (a and not b) or (not a and b)
-    logger.debug("xor{} {} {} ".format( a, b, ret))
+    logger.debug("xor {} {} {} ".format( a, b, ret))
     return ((a and not b) or (not a and b))
 
 def or_rule(a, b):
