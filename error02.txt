@@ -3,4 +3,4 @@ R => D
 
 =ABC
 ?D
-# reponse indeterminer car F => indeterminer
+# OK reponse indeterminer car F => indeterminer

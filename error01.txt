@@ -1,8 +1,9 @@
-
-Q => D
 A => D
+Q => D
+
+
 
 =ABC
 ?D
-#reponse True car undeterminer et true = true
-#
+# ECHEC reponse True car undeterminer et true = true
+#   resultat change selon l ordre  des ligne
