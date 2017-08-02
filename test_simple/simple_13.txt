@@ -1,12 +1,4 @@
 A | B => C
 C + B => D
 = AB
-?D
-
-
-a => b + d
-b => c
-d => e
-
-
-a => b
+?D #True
