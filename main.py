@@ -141,7 +141,7 @@ def solveQuery(dict, leftTab, rightTab, alphabet, line, lineTab):
         if alphabet[leftTab[line]]["constant"] == False:
             print ("enfin")
             r = parseRightLetter(alphabet[leftTab[line]]["letter"], leftTab, rightTab, r, lineTab)
-            retExp = r.alpha[leftTab[line]]["val"]
+            retExp = "1" if r.alpha[leftTab[line]]["val"] == True else "0"
             print ("retExp", retExp)
         elif alphabet[leftTab[line]]["val"] == True: # j'ai ecrit 0 au lieu de line
             print ("bonjour", alphabet[leftTab[line]])
@@ -203,6 +203,7 @@ def solveRightSide(dict, leftTab, rightTab, alphabet, line, letter, lineTab):
             alphabet[letter]["val"] = True
             print ("here", letter)
         else:
+            print (leftTab[line])
             alphabet[letter]["val"] = False
             print ("la", letter)
     alphabet[letter]["constant"] = True
