@@ -76,7 +76,7 @@ def letterDicValue(equal, letterFile):
     dic = {}
     logger.debug("DicValue")
     for i in letterFile:
-        logger.debug("i {}".format(i))
+        # logger.debug("i {}".format(i))
         if equal[0].find(i) != -1:
             dic[i] = {"letter": i, "val": True, "constant": True}
         else:
@@ -138,7 +138,13 @@ def solveQuery(dict, leftTab, rightTab, alphabet, line, lineTab):
     if len(leftTab[line]) > 1:
         retExp = solveExp(r, dict, leftTab[line], leftTab, rightTab, lineTab)
     else:
-        if alphabet[leftTab[0]]["val"] == True:
+        if alphabet[leftTab[line]]["constant"] == False:
+            print ("enfin")
+            r = parseRightLetter(alphabet[leftTab[line]]["letter"], leftTab, rightTab, r, lineTab)
+            retExp = r.alpha[leftTab[line]]["val"]
+            print ("retExp", retExp)
+        elif alphabet[leftTab[line]]["val"] == True: # j'ai ecrit 0 au lieu de line
+            print ("bonjour", alphabet[leftTab[line]])
             retExp = "1"
         else:
             retExp = "0"
@@ -162,10 +168,10 @@ def solveExp(r, dict, currentLine, leftTab, rightTab, lineTab):
 #bruteforce pour le coté droit, il teste True, apres False
 def solveRightSide(dict, leftTab, rightTab, alphabet, line, letter, lineTab):
     Ret = collections.namedtuple('Ret', ['alpha', 'left'])
-    logger.debug("+++++++++++entré+++++++++++{}{}".format(line, alphabet[letter]["val"]))
+    logger.debug("+++++++++++entré+++++++++++{}{}{}".format(line, alphabet[letter]["val"], letter))
     logger.debug("leftTab".format(leftTab))
     r = Ret(alphabet, left=leftTab[line])
-    logger.debug("+++++++++++entré+++++++++++{}{}".format(line, alphabet[letter]["val"]))
+    logger.debug("+++++++++++entré+++++++++++|{}|{}|".format(rightTab[line], len(rightTab[line].replace(r"\s    ", ""))))
     if len(rightTab[line]) > 1:
         logger.debug("_____1______")
         alphabet[letter]["val"] = True
@@ -195,8 +201,10 @@ def solveRightSide(dict, leftTab, rightTab, alphabet, line, letter, lineTab):
     else:
         if leftTab[line] == "1":
             alphabet[letter]["val"] = True
+            print ("here", letter)
         else:
             alphabet[letter]["val"] = False
+            print ("la", letter)
     alphabet[letter]["constant"] = True
     logger.debug("sorti{}{}".format(line, alphabet[letter]["val"]))
     return r
@@ -212,6 +220,7 @@ def parseRightLetter(letter, leftTab, rightTab, r, lineTab):
             r = solveQuery(dict, leftTab, rightTab, r.alpha, line, lineTab)
             leftTab[line] = r.left
             lineTab[line] = True
+            print ("lineTab[line]", lineTab[line], line)
             r = solveRightSide({}, leftTab, rightTab, r.alpha, line, letter, lineTab)
     return r
 
@@ -224,19 +233,23 @@ def parseQuery(dict, leftTab, rightTab, alphabet, queryTab, lineTab):
     #dict indique la position des queries
     for letter in dict:
         #on accede au contenu de la key de dict et il faut deux for pour ça
-        logger.debug("dict[letter] {}".format(dict[letter]["right"]))
+        # logger.debug("dict[letter] {}".format(dict[letter]["right"]))
         for line in dict[letter]["right"]:
             if lineTab[line] == False:
-                logger.debug('value {}'.format(line))
-                logger.debug("left[line] {}".format(leftTab[line]))
-                logger.debug("right[line] {}".format(rightTab[line]))
+                # print ("line", leftTab[line])
+                # logger.debug('value {}'.format(line))
+                # logger.debug("left[line] {}".format(leftTab[line]))
+                # logger.debug("right[line] {}".format(rightTab[line]))
                 r = Ret(alphabet, left=leftTab[line])
                 #alphabet = solveQuery(alphabet, left, right, value,  )
                 r = solveQuery(dict, leftTab, rightTab, alphabet, line, lineTab)
                 leftTab[line] = r.left
                 lineTab[line] = True
+                # logger.debug("lineTab []".format(lineTab))
+                print ("lineTab", lineTab)
                 solveRightSide(dict, leftTab, rightTab, alphabet, line, letter, lineTab)
                 #alphabet = handleLeftSide(dict, left[value], right[value], alphabet, query)
+    print ("lineTab final", lineTab)
     queryResult(queryTab, alphabet)
     return alphabet
 
@@ -245,10 +258,10 @@ def main(argv):
     regex = re.compile(r"#.*", re.IGNORECASE)
     file2 = regex.sub("", file.read())
     file2 = file2.replace(" ", "")
-    logger.debug('INFO ERROR')
+    # logger.debug('INFO ERROR')
 
 
-    logger.debug(file2)
+    # logger.debug(file2)
     leftTab = re.findall(".*[A-Z()!]\s*(?=\=>)|.*[A-Z]\s*(?=<\=>)", file2)
     rightTab = re.findall("(?<=\=>).*[A-Z]\s*(?=\n)|(?<=<\=>).*[A-Z]\s*(?=\n)", file2)
     equTab = re.findall("=>|<=>", file2)
@@ -267,7 +280,7 @@ def main(argv):
     # dictionnaire des lettres avec leurs valeurs
     dic = letterDicValue(equalTab, letterFile)
     # putLettersToTrue(dic, equal)
-    printAll(dicEqu, dic, leftTab, rightTab, equalTab, queryTab, letterFile, equTab, letterLine)
+    # printAll(dicEqu, dic, leftTab, rightTab, equalTab, queryTab, letterFile, equTab, letterLine)
     # determineBool(left, right, dicEqu, dic)
     #dict indique la position des queries
     dict = findQueryLetter(queryTab, leftTab, rightTab)
