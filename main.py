@@ -74,7 +74,6 @@ def letterForEachLine(file):
 def letterDicValue(equal, letterFile):
     # dictionnaire des lettres avec leurs valeurs
     dic = {}
-    logger.debug("DicValue")
     for i in letterFile:
         # logger.debug("i {}".format(i))
         if equal[0].find(i) != -1:
@@ -83,6 +82,7 @@ def letterDicValue(equal, letterFile):
             dic[i] = {"letter": i, "val": False, "constant": False}
     dic["1"] = {"letter": "1", "val": True, "constant": True}
     dic["0"] = {"letter": "0", "val": False, "constant": True}
+    logger.debug("DicValue {}".format(dic))
     return dic
 
 #pour avoir la position des lettres de la query
@@ -259,10 +259,13 @@ def main(argv):
     regex = re.compile(r"#.*", re.IGNORECASE)
     file2 = regex.sub("", file.read())
     file2 = file2.replace(" ", "")
-    # logger.debug('INFO ERROR')
 
 
-    # logger.debug(file2)
+    logger.debug('file {}'.format(file2))
+    while file2.find('\n\n') != -1:
+        file2 = file2.replace('\n\n', '\n')
+    logger.debug('file {}'.format(file2))
+
     leftTab = re.findall(".*[A-Z()!]\s*(?=\=>)|.*[A-Z]\s*(?=<\=>)", file2)
     rightTab = re.findall("(?<=\=>).*[A-Z]\s*(?=\n)|(?<=<\=>).*[A-Z]\s*(?=\n)", file2)
     equTab = re.findall("=>|<=>", file2)
@@ -281,7 +284,7 @@ def main(argv):
     # dictionnaire des lettres avec leurs valeurs
     dic = letterDicValue(equalTab, letterFile)
     # putLettersToTrue(dic, equal)
-    # printAll(dicEqu, dic, leftTab, rightTab, equalTab, queryTab, letterFile, equTab, letterLine)
+    printAll(dicEqu, dic, leftTab, rightTab, equalTab, queryTab, letterFile, equTab, letterLine)
     # determineBool(left, right, dicEqu, dic)
     #dict indique la position des queries
     dict = findQueryLetter(queryTab, leftTab, rightTab)
