@@ -210,13 +210,13 @@ def solveEquivalenceRight(dict, leftTab, rightTab, alphabet, line, letter, lineT
                 alphabet[letter]["val"] = True
                 r = Ret(alphabet, left=leftTab[line])
     else:
-        # #gestion des conflit entre ligne
-        # if alphabet[letter]["constant"] == True:
-        #     if alphabet[letter]["val"] == True and leftTab[line] == "0" :
-        #         alphabet[letter]["val"] = None
-        #     elif alphabet[letter]["val"] == False and leftTab[line] == "1":
-        #         alphabet[letter]["val"] = None
-        #     return r
+        #gestion des conflit entre ligne
+        if alphabet[letter]["constant"] == True:
+            if alphabet[letter]["val"] == True and leftTab[line] == "0" :
+                alphabet[letter]["val"] = None
+            elif alphabet[letter]["val"] == False and leftTab[line] == "1":
+                alphabet[letter]["val"] = None
+            return r
         if leftTab[line] == "1":
             alphabet[letter]["val"] = True
             logger.debug("here".format(letter))
@@ -265,9 +265,11 @@ def solveImplicationRight(dict, leftTab, rightTab, alphabet, line, letter, lineT
     else:
         #gestion des conflit entre ligne
         if alphabet[letter]["constant"] == True:
-            if alphabet[letter]["val"] == True and leftTab[line] == "0" :
-                alphabet[letter]["val"] = None
-            elif alphabet[letter]["val"] == False and leftTab[line] == "1":
+            # if alphabet[letter]["val"] == True and leftTab[line] == "0" :
+            #     alphabet[letter]["val"] = None
+            # elif alphabet[letter]["val"] == False and leftTab[line] == "1":
+
+            if alphabet[letter]["val"] == False and leftTab[line] == "1":
                 alphabet[letter]["val"] = None
             return r
         if leftTab[line] == "1":
