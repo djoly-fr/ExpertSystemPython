@@ -64,10 +64,10 @@ def findOr(r, dict, currentLine, leftTab, rightTab, lineTab):
     letter2 = currentLine[positionOP + 1]
     logger.debug("letter1 {}".format(letter1 ))
     if r.alpha[letter1]["constant"] == False:
-        print ("letterLine1", letter1)
+        logger.debug("letterLine1 {}".format(letter1))
         r = parseRightLetter(letter1, leftTab, rightTab, r, lineTab)
     if r.alpha[letter2]["constant"] == False:
-        print ("letterLine2")
+        logger.debug("letterLine2")
         r = parseRightLetter(letter2, leftTab, rightTab, r, lineTab)
     logger.debug("bool {}".format(r.alpha[letter1]['val']))
     logger.debug("bool {}".format(r.alpha[letter1]['val']))
@@ -93,10 +93,10 @@ def findXor(r, dict, currentLine, leftTab, rightTab, lineTab):
     letter2 = currentLine[positionOP + 1]
     logger.debug("letter1 {}".format(letter1 ))
     if r.alpha[letter1]["constant"] == False:
-        print ("letterLine1 {}".format( letter1))
+        logger.debug("letterLine1 {}".format( letter1))
         r = parseRightLetter(letter1, leftTab, rightTab, r, lineTab)
     if r.alpha[letter2]["constant"] == False:
-        print ("letterLine2")
+        logger.debug("letterLine2")
         r = parseRightLetter(letter2, leftTab, rightTab, r, lineTab)
     logger.debug("bool {}".format(r.alpha[letter1]['val']))
     logger.debug("bool {}".format(r.alpha[letter1]['val']))

@@ -139,12 +139,12 @@ def solveQuery(dict, leftTab, rightTab, alphabet, line, lineTab):
         retExp = solveExp(r, dict, leftTab[line], leftTab, rightTab, lineTab)
     else:
         if alphabet[leftTab[line]]["constant"] == False:
-            print ("enfin")
+            # print ("enfin")
             r = parseRightLetter(alphabet[leftTab[line]]["letter"], leftTab, rightTab, r, lineTab)
             retExp = "1" if r.alpha[leftTab[line]]["val"] == True else "0"
-            print ("retExp", retExp)
+            logger.debug("retExp {}".format(retExp))
         elif alphabet[leftTab[line]]["val"] == True: # j'ai ecrit 0 au lieu de line
-            print ("bonjour", alphabet[leftTab[line]])
+            logger.debug("bonjour {}".format(alphabet[leftTab[line]]))
             retExp = "1"
         else:
             retExp = "0"
@@ -201,13 +201,13 @@ def solveRightSide(dict, leftTab, rightTab, alphabet, line, letter, lineTab):
     else:
         if leftTab[line] == "1":
             alphabet[letter]["val"] = True
-            print ("here", letter)
+            logger.debug("here".format(letter))
         else:
-            print (leftTab[line])
+            logger.debug(leftTab[line])
             alphabet[letter]["val"] = False
-            print ("la", letter)
+            logger.debug("la {}".format(letter))
     alphabet[letter]["constant"] = True
-    logger.debug("sorti{}{}".format(line, alphabet[letter]["val"]))
+    logger.debug("sorti {} {}".format(line, alphabet[letter]["val"]))
     return r
 
 def parseRightLetter(letter, leftTab, rightTab, r, lineTab):
@@ -221,7 +221,7 @@ def parseRightLetter(letter, leftTab, rightTab, r, lineTab):
             r = solveQuery(dict, leftTab, rightTab, r.alpha, line, lineTab)
             leftTab[line] = r.left
             lineTab[line] = True
-            print ("lineTab[line]", lineTab[line], line)
+            logger.debug("lineTab[line] {} {} ".format(lineTab[line], line))
             r = solveRightSide({}, leftTab, rightTab, r.alpha, line, letter, lineTab)
     return r
 
@@ -247,10 +247,10 @@ def parseQuery(dict, leftTab, rightTab, alphabet, queryTab, lineTab):
                 leftTab[line] = r.left
                 lineTab[line] = True
                 # logger.debug("lineTab []".format(lineTab))
-                print ("lineTab", lineTab)
+                logger.debug("lineTab {}".format(lineTab))
                 solveRightSide(dict, leftTab, rightTab, alphabet, line, letter, lineTab)
                 #alphabet = handleLeftSide(dict, left[value], right[value], alphabet, query)
-    print ("lineTab final", lineTab)
+        logger.debug("lineTab final {}".format(lineTab))
     queryResult(queryTab, alphabet)
     return alphabet
 
