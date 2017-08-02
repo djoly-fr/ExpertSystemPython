@@ -129,7 +129,7 @@ def printAll(dicEqu, dic, left, right, equal, query, letterFile, equ, letterLine
 
 
 #fonction qui repond a la query de type B + A => E | F
-def solveQuery(dict, leftTab, rightTab, alphabet, line, lineTab):
+def solveQuery(dict, leftTab, rightTab, alphabet, line, lineTab, equTab):
     Ret = collections.namedtuple('Ret', ['alpha', 'left'])
     logger.debug('dans SolveQuery')
     logger.debug("left {} value {}".format(leftTab, line))
@@ -140,7 +140,7 @@ def solveQuery(dict, leftTab, rightTab, alphabet, line, lineTab):
     else:
         if alphabet[leftTab[line]]["constant"] == False:
             # print ("enfin")
-            r = parseRightLetter(alphabet[leftTab[line]]["letter"], leftTab, rightTab, r, lineTab)
+            r = parseRightLetter(alphabet[leftTab[line]]["letter"], leftTab, rightTab, r, lineTab, equTab)
             retExp = "1" if r.alpha[leftTab[line]]["val"] == True else "0"
             logger.debug("retExp {}".format(retExp))
         elif alphabet[leftTab[line]]["val"] == True: # j'ai ecrit 0 au lieu de line
@@ -153,23 +153,34 @@ def solveQuery(dict, leftTab, rightTab, alphabet, line, lineTab):
     return r
 
 #fonction recursive qui resout les expression type Q + (A | (D + B) + H) + E
-def solveExp(r, dict, currentLine, leftTab, rightTab, lineTab):
+def solveExp(r, dict, currentLine, leftTab, rightTab, lineTab, equTab):
     logger.debug("__debut solve __")
     if currentLine == "0" or currentLine == "1":
         return currentLine
     logger.debug("r {}".format(r))
-    currentLine = fr.findParanthese(r, dict, currentLine, leftTab, rightTab, lineTab)
-    currentLine = fr.findExclamation(r, dict, currentLine, leftTab, rightTab, lineTab)
-    currentLine = fr.findAnd(r, dict, currentLine, leftTab, rightTab, lineTab)
-    currentLine = fr.findOr(r, dict, currentLine, leftTab, rightTab, lineTab)
-    currentLine = fr.findXor(r, dict, currentLine, leftTab, rightTab, lineTab)
+    currentLine = fr.findParanthese(r, dict, currentLine, leftTab, rightTab, lineTab, equTab)
+    currentLine = fr.findExclamation(r, dict, currentLine, leftTab, rightTab, lineTab, equTab)
+    currentLine = fr.findAnd(r, dict, currentLine, leftTab, rightTab, lineTab, equTab)
+    currentLine = fr.findOr(r, dict, currentLine, leftTab, rightTab, lineTab, equTab)
+    currentLine = fr.findXor(r, dict, currentLine, leftTab, rightTab, lineTab, equTab)
     return currentLine   #return le string de l exp, a la fin on aura 0 ou 1
 
 #bruteforce pour le coté droit, il teste True, apres False
-def solveRightSide(dict, leftTab, rightTab, alphabet, line, letter, lineTab):
+def solveRightSide(dict, leftTab, rightTab, alphabet, line, letter, lineTab, equTab):
+    if equTab[line] == '=>':
+        logger.debug('dans implication')
+        return solveImplicationRight(dict, leftTab, rightTab, alphabet, line, letter, lineTab, equTab)
+    elif equTab[line] == '<=>':
+        logger.debug('dans equivalence')
+        return solveEquivalenceRight(dict, leftTab, rightTab, alphabet, line, letter, lineTab, equTab)
+    else:
+        logger.error('ni implication ni equivqlence')
+    return
+
+def solveEquivalenceRight(dict, leftTab, rightTab, alphabet, line, letter, lineTab, equTab):
     Ret = collections.namedtuple('Ret', ['alpha', 'left'])
     logger.debug("+++++++++++entré+++++++++++{}{}{}".format(line, alphabet[letter]["val"], letter))
-    logger.debug("leftTab".format(leftTab))
+    logger.debug("leftTab {}".format(leftTab))
     r = Ret(alphabet, left=leftTab[line])
     logger.debug("+++++++++++entré+++++++++++|{}|{}|".format(rightTab[line], len(rightTab[line].replace(r"\s    ", ""))))
     if len(rightTab[line]) > 1:
@@ -215,9 +226,63 @@ def solveRightSide(dict, leftTab, rightTab, alphabet, line, letter, lineTab):
             logger.debug("la {}".format(letter))
     alphabet[letter]["constant"] = True
     logger.debug("sorti {} {}".format(line, alphabet[letter]["val"]))
+    print(dict, '|' , leftTab, '|' ,  rightTab,  '|' , alphabet, '|' ,  line, '|' ,  letter, '|' ,  lineTab)
     return r
 
-def parseRightLetter(letter, leftTab, rightTab, r, lineTab):
+
+def solveImplicationRight(dict, leftTab, rightTab, alphabet, line, letter, lineTab, equTab):
+    Ret = collections.namedtuple('Ret', ['alpha', 'left'])
+    logger.debug("+++++++++++entré+++++++++++{}{}{}".format(line, alphabet[letter]["val"], letter))
+    logger.debug("leftTab {}".format(leftTab))
+    r = Ret(alphabet, left=leftTab[line])
+    logger.debug("+++++++++++entré+++++++++++|{}|{}|".format(rightTab[line], len(rightTab[line].replace(r"\s    ", ""))))
+    if len(rightTab[line]) > 1:
+        logger.debug("_____1______")
+        alphabet[letter]["val"] = True
+        r = Ret(alphabet, left=leftTab[line])
+        str = solveExp(r, dict, rightTab[line], leftTab, rightTab, lineTab)
+        if str != leftTab[line]:
+            logger.debug("_____2______")
+            alphabet[letter]["val"] = False
+            r = Ret(alphabet, left=leftTab[line])
+            str = solveExp(r, dict, rightTab[line], leftTab, rightTab, lineTab)
+            if str != leftTab[line]:
+                logger.debug("_____3______")
+                alphabet[letter]["val"] = None
+                r = Ret(alphabet, left=leftTab[line])
+        else:
+            logger.debug("_____4______")
+            alphabet[letter]["val"] = False
+            r = Ret(alphabet, left=leftTab[line])
+            str = solveExp(r, dict, rightTab[line], leftTab, rightTab, lineTab)
+            if str == leftTab[line]:
+                logger.debug("_____5______")
+                alphabet[letter]["val"] = None
+                r = Ret(alphabet, left=leftTab[line])
+            else:
+                alphabet[letter]["val"] = True
+                r = Ret(alphabet, left=leftTab[line])
+    else:
+        # #gestion des conflit entre ligne
+        # if alphabet[letter]["constant"] == True:
+        #     if alphabet[letter]["val"] == True and leftTab[line] == "0" :
+        #         alphabet[letter]["val"] = None
+        #     elif alphabet[letter]["val"] == False and leftTab[line] == "1":
+        #         alphabet[letter]["val"] = None
+        #     return r
+        if leftTab[line] == "1":
+            alphabet[letter]["val"] = True
+            logger.debug("here".format(letter))
+            alphabet[letter]["constant"] = True
+        else:
+            logger.debug(leftTab[line])
+            alphabet[letter]["val"] = None
+            logger.debug("la {}".format(letter))
+    logger.debug("sorti {} {}".format(line, alphabet[letter]["val"]))
+    return r
+
+
+def parseRightLetter(letter, leftTab, rightTab, r, lineTab, equTab):
     logger.debug("___parseRightLetter___ {}".format(letter))
     tab = findLetterRightSide(letter, rightTab)
     Ret = collections.namedtuple('Ret', ['alpha', 'left'])
@@ -229,14 +294,14 @@ def parseRightLetter(letter, leftTab, rightTab, r, lineTab):
             leftTab[line] = r.left
             lineTab[line] = True
             logger.debug("lineTab[line] {} {} ".format(lineTab[line], line))
-            r = solveRightSide({}, leftTab, rightTab, r.alpha, line, letter, lineTab)
+            r = solveRightSide({}, leftTab, rightTab, r.alpha, line, letter, lineTab, equTab)
     return r
 
 #dict : dict des lettres avec les lignes
 #leftTab
 #rightTab
 #alphabet : dict des letter avec leur valeur et constant ou non
-def parseQuery(dict, leftTab, rightTab, alphabet, queryTab, lineTab):
+def parseQuery(dict, leftTab, rightTab, alphabet, queryTab, lineTab, equTab):
     Ret = collections.namedtuple('Ret', ['alpha', 'left'])
     #dict indique la position des queries
     for letter in dict:
@@ -251,13 +316,13 @@ def parseQuery(dict, leftTab, rightTab, alphabet, queryTab, lineTab):
                 r = Ret(alphabet, left=leftTab[line])
                 #alphabet = solveQuery(alphabet, left, right, value,  )
                 logger.info('r1 {}'.format(r))
-                r = solveQuery(dict, leftTab, rightTab, alphabet, line, lineTab)
+                r = solveQuery(dict, leftTab, rightTab, alphabet, line, lineTab, equTab)
                 leftTab[line] = r.left
                 lineTab[line] = True
                 # logger.debug("lineTab []".format(lineTab))
                 logger.debug("lineTab {}".format(lineTab))
                 logger.info('r2 {}'.format(r))
-                solveRightSide(dict, leftTab, rightTab, alphabet, line, letter, lineTab)
+                solveRightSide(dict, leftTab, rightTab, alphabet, line, letter, lineTab, equTab)
                 logger.info('r3 {}'.format(r))
 
                 #alphabet = handleLeftSide(dict, left[value], right[value], alphabet, query)
@@ -299,7 +364,7 @@ def main(argv):
     # determineBool(left, right, dicEqu, dic)
     #dict indique la position des queries
     dict = findQueryLetter(queryTab, leftTab, rightTab)
-    parseQuery(dict, leftTab, rightTab, dic, queryTab, lineTab)
+    parseQuery(dict, leftTab, rightTab, dic, queryTab, lineTab, equTab)
 
 #logle resultat de la query
 def queryResult(query, dic):
