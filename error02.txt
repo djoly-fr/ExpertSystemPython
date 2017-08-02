@@ -1,0 +1,6 @@
+R => D
+
+
+=ABC
+?D
+# reponse indeterminer car F => indeterminer

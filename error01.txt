@@ -4,5 +4,5 @@ A => D
 
 =ABC
 ?D
-#reponse indeterminer car conflit de resultat entre deux ligne
+#reponse True car undeterminer et true = true
 #

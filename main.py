@@ -199,13 +199,13 @@ def solveRightSide(dict, leftTab, rightTab, alphabet, line, letter, lineTab):
                 alphabet[letter]["val"] = True
                 r = Ret(alphabet, left=leftTab[line])
     else:
-        #gestion des conflit entre ligne
-        if alphabet[letter]["constant"] == True:
-            if alphabet[letter]["val"] == True and leftTab[line] == "0" :
-                alphabet[letter]["val"] = None
-            elif alphabet[letter]["val"] == False and leftTab[line] == "1":
-                alphabet[letter]["val"] = None
-            return r
+        # #gestion des conflit entre ligne
+        # if alphabet[letter]["constant"] == True:
+        #     if alphabet[letter]["val"] == True and leftTab[line] == "0" :
+        #         alphabet[letter]["val"] = None
+        #     elif alphabet[letter]["val"] == False and leftTab[line] == "1":
+        #         alphabet[letter]["val"] = None
+        #     return r
         if leftTab[line] == "1":
             alphabet[letter]["val"] = True
             logger.debug("here".format(letter))
@@ -250,12 +250,16 @@ def parseQuery(dict, leftTab, rightTab, alphabet, queryTab, lineTab):
                 # logger.debug("right[line] {}".format(rightTab[line]))
                 r = Ret(alphabet, left=leftTab[line])
                 #alphabet = solveQuery(alphabet, left, right, value,  )
+                logger.info('r1 {}'.format(r))
                 r = solveQuery(dict, leftTab, rightTab, alphabet, line, lineTab)
                 leftTab[line] = r.left
                 lineTab[line] = True
                 # logger.debug("lineTab []".format(lineTab))
                 logger.debug("lineTab {}".format(lineTab))
+                logger.info('r2 {}'.format(r))
                 solveRightSide(dict, leftTab, rightTab, alphabet, line, letter, lineTab)
+                logger.info('r3 {}'.format(r))
+
                 #alphabet = handleLeftSide(dict, left[value], right[value], alphabet, query)
         logger.debug("lineTab final {}".format(lineTab))
     queryResult(queryTab, alphabet)
