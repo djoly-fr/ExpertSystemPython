@@ -237,7 +237,7 @@ def solveImplicationRight(dict, leftTab, rightTab, alphabet, line, letter, lineT
     r = Ret(alphabet, left=leftTab[line])
     logger.debug("+++++++++++entré+++++++++++|{}|{}|".format(rightTab[line], len(rightTab[line].replace(r"\s    ", ""))))
     if len(rightTab[line]) > 1:
-        logger.debug("_____1______")
+        logger.debug("____Operation a droite______")
         alphabet[letter]["val"] = True
         r = Ret(alphabet, left=leftTab[line])
         str = solveExp(r, dict, rightTab[line], leftTab, rightTab, lineTab, equTab)
