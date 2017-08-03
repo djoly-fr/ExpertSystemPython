@@ -51,7 +51,7 @@ def findExclamation(r, dict, currentLine, leftTab, rightTab, lineTab, equTab):
     sub = currentLine.replace("!"+letter, result, 1)
     #sub = str[:letter1]+result+str[letter2]
     logger.debug("sub {}".format( sub))
-    newstr = solveExp(r, dict, sub, leftTab, rightTab, lineTab)
+    newstr = solveExp(r, dict, sub, leftTab, rightTab, lineTab, equTab)
     logger.debug("newstr {}".format(newstr))
     return newstr
 
@@ -113,7 +113,7 @@ def findXor(r, dict, currentLine, leftTab, rightTab, lineTab, equTab):
     logger.debug("newstr {}".format(newstr))
     return newstr
 
-def findParanthese(r, dict, currentLine, leftTab, rightTab, lineTab):
+def findParanthese(r, dict, currentLine, leftTab, rightTab, lineTab, equTab):
     logger.debug('str dans find paranthese {}'.format(currentLine))
     position1 = currentLine.find('(')
     if position1 == -1:

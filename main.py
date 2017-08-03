@@ -136,7 +136,7 @@ def solveQuery(dict, leftTab, rightTab, alphabet, line, lineTab, equTab):
     r = Ret(alphabet, left=leftTab[line])
     logger.debug("left {}".format(leftTab))
     if len(leftTab[line]) > 1:
-        retExp = solveExp(r, dict, leftTab[line], leftTab, rightTab, lineTab)
+        retExp = solveExp(r, dict, leftTab[line], leftTab, rightTab, lineTab, equTab)
     else:
         if alphabet[leftTab[line]]["constant"] == False:
             # print ("enfin")
