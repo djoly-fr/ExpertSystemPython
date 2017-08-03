@@ -204,7 +204,7 @@ def solveEquivalenceRight(dict, leftTab, rightTab, alphabet, line, letter, lineT
             str = solveExp(r, dict, rightTab[line], leftTab, rightTab, lineTab, equTab)
             if str == leftTab[line]:
                 logger.debug("_____5______")
-                alphabet[letter]["val"] = False
+                alphabet[letter]["val"] = None
                 r = Ret(alphabet, left=leftTab[line])
             else:
                 alphabet[letter]["val"] = True
