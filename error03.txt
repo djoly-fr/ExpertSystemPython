@@ -1,5 +1,6 @@
-!(G + H) <=> D
-# !(G + H) => D
+!(G + H) <=> D # error de regex
+#!(G + H) => D
+# H <=> D  # regex ok
 
 
 

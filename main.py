@@ -312,9 +312,11 @@ def parseQuery(dict, leftTab, rightTab, alphabet, queryTab, lineTab, equTab):
         for line in dict[letter]["right"]:
             if lineTab[line] == False:
                 # print ("line", leftTab[line])
-                # logger.debug('value {}'.format(line))
-                # logger.debug("left[line] {}".format(leftTab[line]))
-                # logger.debug("right[line] {}".format(rightTab[line]))
+                logger.debug('value {}'.format(line))
+                logger.debug("right[line] {}".format(rightTab[line]))
+                logger.debug("left {}".format(leftTab))
+                logger.debug("left[line] {}".format(leftTab[line]))
+
                 r = Ret(alphabet, left=leftTab[line])
                 #alphabet = solveQuery(alphabet, left, right, value,  )
                 logger.info('r1 {}'.format(r))
