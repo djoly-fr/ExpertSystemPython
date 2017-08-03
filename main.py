@@ -242,24 +242,25 @@ def solveImplicationRight(dict, leftTab, rightTab, alphabet, line, letter, lineT
         r = Ret(alphabet, left=leftTab[line])
         str = solveExp(r, dict, rightTab[line], leftTab, rightTab, lineTab, equTab)
         if str != leftTab[line]:
-            logger.debug("_____2______")
+            logger.debug("_____gauche different de droite 1______")
             alphabet[letter]["val"] = False
             r = Ret(alphabet, left=leftTab[line])
             str = solveExp(r, dict, rightTab[line], leftTab, rightTab, lineTab, equTab)
             if str != leftTab[line]:
-                logger.debug("_____3______")
+                logger.debug("_____gauche different de droite 2______")
                 alphabet[letter]["val"] = None
                 r = Ret(alphabet, left=leftTab[line])
         else:
-            logger.debug("_____4______")
+            logger.debug("_____gauche egale droite 1______")
             alphabet[letter]["val"] = False
             r = Ret(alphabet, left=leftTab[line])
             str = solveExp(r, dict, rightTab[line], leftTab, rightTab, lineTab, equTab)
             if str == leftTab[line]:
-                logger.debug("_____5______")
+                logger.debug("_____gauche egale droite 2______")
                 alphabet[letter]["val"] = None
                 r = Ret(alphabet, left=leftTab[line])
             else:
+                logger.debug("_____gauche different de droite 3______")
                 alphabet[letter]["val"] = True
                 r = Ret(alphabet, left=leftTab[line])
     else:
