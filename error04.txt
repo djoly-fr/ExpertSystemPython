@@ -7,4 +7,4 @@ G => !D
 
 =ABC
 ?D
-# OK reponse True car undeterminer et true = true
+#ERROR DE RETURN
