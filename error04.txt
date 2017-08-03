@@ -1,5 +1,5 @@
 #G <=> !D
-!G => !D
+G <=> !D + K
 
 
 
@@ -7,4 +7,5 @@
 
 =ABC
 ?D
-#ERROR DE RETURN
+#ERROR DE RETURN G => !D
+
