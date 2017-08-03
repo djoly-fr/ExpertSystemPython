@@ -187,12 +187,12 @@ def solveEquivalenceRight(dict, leftTab, rightTab, alphabet, line, letter, lineT
         logger.debug("_____1______")
         alphabet[letter]["val"] = True
         r = Ret(alphabet, left=leftTab[line])
-        str = solveExp(r, dict, rightTab[line], leftTab, rightTab, lineTab)
+        str = solveExp(r, dict, rightTab[line], leftTab, rightTab, lineTab, equTab)
         if str != leftTab[line]:
             logger.debug("_____2______")
             alphabet[letter]["val"] = False
             r = Ret(alphabet, left=leftTab[line])
-            str = solveExp(r, dict, rightTab[line], leftTab, rightTab, lineTab)
+            str = solveExp(r, dict, rightTab[line], leftTab, rightTab, lineTab, equTab)
             if str != leftTab[line]:
                 logger.debug("_____3______")
                 alphabet[letter]["val"] = None
@@ -201,7 +201,7 @@ def solveEquivalenceRight(dict, leftTab, rightTab, alphabet, line, letter, lineT
             logger.debug("_____4______")
             alphabet[letter]["val"] = False
             r = Ret(alphabet, left=leftTab[line])
-            str = solveExp(r, dict, rightTab[line], leftTab, rightTab, lineTab)
+            str = solveExp(r, dict, rightTab[line], leftTab, rightTab, lineTab, equTab)
             if str == leftTab[line]:
                 logger.debug("_____5______")
                 alphabet[letter]["val"] = None
@@ -226,7 +226,7 @@ def solveEquivalenceRight(dict, leftTab, rightTab, alphabet, line, letter, lineT
             logger.debug("la {}".format(letter))
     alphabet[letter]["constant"] = True
     logger.debug("sorti {} {}".format(line, alphabet[letter]["val"]))
-    print(dict, '|' , leftTab, '|' ,  rightTab,  '|' , alphabet, '|' ,  line, '|' ,  letter, '|' ,  lineTab)
+    # print(dict, '|' , leftTab, '|' ,  rightTab,  '|' , alphabet, '|' ,  line, '|' ,  letter, '|' ,  lineTab)
     return r
 
 
@@ -240,12 +240,12 @@ def solveImplicationRight(dict, leftTab, rightTab, alphabet, line, letter, lineT
         logger.debug("_____1______")
         alphabet[letter]["val"] = True
         r = Ret(alphabet, left=leftTab[line])
-        str = solveExp(r, dict, rightTab[line], leftTab, rightTab, lineTab)
+        str = solveExp(r, dict, rightTab[line], leftTab, rightTab, lineTab, equTab)
         if str != leftTab[line]:
             logger.debug("_____2______")
             alphabet[letter]["val"] = False
             r = Ret(alphabet, left=leftTab[line])
-            str = solveExp(r, dict, rightTab[line], leftTab, rightTab, lineTab)
+            str = solveExp(r, dict, rightTab[line], leftTab, rightTab, lineTab, equTab)
             if str != leftTab[line]:
                 logger.debug("_____3______")
                 alphabet[letter]["val"] = None
@@ -254,7 +254,7 @@ def solveImplicationRight(dict, leftTab, rightTab, alphabet, line, letter, lineT
             logger.debug("_____4______")
             alphabet[letter]["val"] = False
             r = Ret(alphabet, left=leftTab[line])
-            str = solveExp(r, dict, rightTab[line], leftTab, rightTab, lineTab)
+            str = solveExp(r, dict, rightTab[line], leftTab, rightTab, lineTab, equTab)
             if str == leftTab[line]:
                 logger.debug("_____5______")
                 alphabet[letter]["val"] = None
