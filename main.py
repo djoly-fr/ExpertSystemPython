@@ -27,6 +27,8 @@ import random
 # logger.setLevel(logging.DEBUG)
 # if not logger.handlers:
 #     logger.addHandler(handler)
+from parseFile import checkFile
+
 
 def and_rule(a, b):
     ret = a and b
@@ -429,16 +431,9 @@ def parseQuery(dict, leftTab, rightTab, alphabet, queryTab, lineTab, equTab):
 
 def main(argv):
 
-    if argv == []:
-        logger.error("Pas de fichier en argument, exit")
-        sys.exit(1)
-    try:  # On essaye de convertir l'année en entier
-        file = open(argv[0], 'r')
-    except:
-        print("Erreur lors de l ouverture du fichier,exit")
-        sys.exit(1)
 
-    print ('file', file)
+    file = checkFile(argv)
+    # print ('file', file)
     regex = re.compile(r"#.*", re.IGNORECASE)
     file2 = regex.sub("", file.read())
     file2 = file2.replace(" ", "")
@@ -472,6 +467,8 @@ def main(argv):
     # determineBool(left, right, dicEqu, dic)
     #dict indique la position des queries
     dict = findQueryLetter(queryTab, leftTab, rightTab)
+    logger.info('file OK')
+    sys.exit(0)
     parseQuery(dict, leftTab, rightTab, dic, queryTab, lineTab, equTab)
     file.close()
 
