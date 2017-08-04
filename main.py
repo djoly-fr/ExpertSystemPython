@@ -342,13 +342,13 @@ def main(argv):
     file2 = file2.replace(" ", "")
 
 
-    logger.debug('file {}'.format(file2))
+    logger.debug('file\n {}'.format(file2))
     while file2.find('\n\n') != -1:
         file2 = file2.replace('\n\n', '\n')
-    logger.debug('file {}'.format(file2))
+    logger.debug('file\n {}'.format(file2))
 
-    leftTab = re.findall(".*[A-Z()!]\s*(?=\=>)|.*[A-Z]\s*(?=<\=>)", file2)
-    rightTab = re.findall("(?<=\=>).*[A-Z]\s*(?=\n)|(?<=<\=>).*[A-Z]\s*(?=\n)", file2)
+    leftTab = re.findall(".*[A-Z()!]\s*(?=\=>)|.*[A-Z()!]\s*(?=<\=>)", file2)
+    rightTab = re.findall("(?<=\=>).*[A-Z()!]\s*(?=\n)|(?<=<\=>).*[A-Z()!\s*(?=\n)", file2)
     equTab = re.findall("=>|<=>", file2)
     equalTab = re.findall("(?<=\n=).*", file2)
     queryTab = re.findall("(?<=\n\?).*", file2)
