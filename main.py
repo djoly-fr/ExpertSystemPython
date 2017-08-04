@@ -7,6 +7,7 @@ import collections
 import copy
 # from find_rule import *
 import find_rule as fr
+import random
 # class Rule:
 # #
 # import logging
@@ -183,19 +184,19 @@ def recurs(tab, number):
         tab.append(tab2)
     return tab
 
-def random_tab(nbLetter)
+def random_tab(nbLetter):
     tab = []
     i = 0
     # nbLetter = 10
     pb = pow(2, nbLetter)
-    print 'pb' , pb
+    # print 'pb' , pb
     while (len(tab) < pb):
         tab = recurs(tab, nbLetter)
         i += 1
-    print tab
-    print len(tab)
+    # print tab
+    # print len(tab)
 
-    print i
+    # print i
     return tab
 
 
@@ -215,7 +216,6 @@ def fetchVarLetter(dict, leftTab, rightTab, alphabet, line, letter, lineTab, equ
 #bruteforce pour le coté droit, il teste True, apres False
 def solveRightSide(dict, leftTab, rightTab, alphabet, line, letter, lineTab, equTab):
     possiblility = fetchVarLetter(dict, leftTab, rightTab, alphabet, line, letter, lineTab, equTab)
-
     if equTab[line] == '=>':
         # logger.debug('dans implication')
         return solveImplicationRight(dict, leftTab, rightTab, alphabet, line, letter, lineTab, equTab)
@@ -232,15 +232,17 @@ def solveEquivalenceRight(dict, leftTab, rightTab, alphabet, line, letter, lineT
     const = alphabet[letter]["val"]
     logger.debug("dans solveEquivalenceRight \n {}{}{} letter: {}{}".format(leftTab[line],equTab[line], rightTab[line], letter,  alphabet[letter]["val"]))
     if len(rightTab[line]) > 1:
-        for lineRand in possiblility.randomTab:
-            [A,B,C]
-            [f,f,v]
-            i = 0
-            for i in range(0, len(lineRand)):
-                alphabet[possiblility.letterTab[i]]["val"] = lineRand[i]
-            for varLet in possiblility.letterTab:
-                for ind in test:
-                    alphabet[varLet]["val"] = ind
+
+        logger.debug('false')
+        # for lineRand in possiblility.randomTab:
+        #     [A,B,C]
+        #     [f,f,v]
+        #     i = 0
+        #     for i in range(0, len(lineRand)):
+        #         alphabet[possiblility.letterTab[i]]["val"] = lineRand[i]
+        #     for varLet in possiblility.letterTab:
+        #         for ind in test:
+        #             alphabet[varLet]["val"] = ind
     else:
         #gestion des conflit entre ligne
         if alphabet[letter]["constant"] == True:
