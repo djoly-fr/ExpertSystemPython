@@ -344,14 +344,21 @@ def parseQuery(dict, leftTab, rightTab, alphabet, queryTab, lineTab, equTab):
     return alphabet
 
 def main(argv):
+
     if argv == []:
         logger.error("Pas de fichier en argument, exit")
         sys.exit(1)
+    try:  # On essaye de convertir l'année en entier
+        file = open(argv[0], 'r')
+    except:
+        print("Erreur lors de l ouverture du fichier,exit")
+        sys.exit(1)
 
-    file = open(argv[0], 'r')
+    print ('file', file)
     regex = re.compile(r"#.*", re.IGNORECASE)
     file2 = regex.sub("", file.read())
     file2 = file2.replace(" ", "")
+
 
 
     logger.debug('file\n {}'.format(file2))
@@ -382,6 +389,7 @@ def main(argv):
     #dict indique la position des queries
     dict = findQueryLetter(queryTab, leftTab, rightTab)
     parseQuery(dict, leftTab, rightTab, dic, queryTab, lineTab, equTab)
+    file.close()
 
 #logle resultat de la query
 def queryResult(query, dic):
