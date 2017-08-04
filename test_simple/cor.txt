@@ -9,4 +9,4 @@ O + P => L + N #true pb bruteforce
 N => M
 =DEIJOP
 #=DEIJP
-?AK
+?AFKP
