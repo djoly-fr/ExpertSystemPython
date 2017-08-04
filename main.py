@@ -5,6 +5,7 @@ import re
 import sys
 import collections
 import copy
+import random
 # from find_rule import *
 import find_rule as fr
 # class Rule:
@@ -183,19 +184,18 @@ def recurs(tab, number):
         tab.append(tab2)
     return tab
 
-def random_tab(nbLetter)
+def random_tab(nbLetter):
     tab = []
     i = 0
     # nbLetter = 10
     pb = pow(2, nbLetter)
-    print 'pb' , pb
+    # print 'pb' , pb
     while (len(tab) < pb):
         tab = recurs(tab, nbLetter)
         i += 1
-    print tab
-    print len(tab)
-
-    print i
+    # print tab
+    # print len(tab)
+    # print i
     return tab
 
 
@@ -218,7 +218,7 @@ def solveRightSide(dict, leftTab, rightTab, alphabet, line, letter, lineTab, equ
 
     if equTab[line] == '=>':
         # logger.debug('dans implication')
-        return solveImplicationRight(dict, leftTab, rightTab, alphabet, line, letter, lineTab, equTab)
+        return solveImplicationRight(dict, leftTab, rightTab, alphabet, line, letter, lineTab, equTab, possiblility)
     elif equTab[line] == '<=>':
         # logger.debug('dans equivalence')
         return solveEquivalenceRight(dict, leftTab, rightTab, alphabet, line, letter, lineTab, equTab, possiblility)
@@ -232,15 +232,17 @@ def solveEquivalenceRight(dict, leftTab, rightTab, alphabet, line, letter, lineT
     const = alphabet[letter]["val"]
     logger.debug("dans solveEquivalenceRight \n {}{}{} letter: {}{}".format(leftTab[line],equTab[line], rightTab[line], letter,  alphabet[letter]["val"]))
     if len(rightTab[line]) > 1:
+        print ("________________________________________")
         for lineRand in possiblility.randomTab:
-            [A,B,C]
-            [f,f,v]
-            i = 0
-            for i in range(0, len(lineRand)):
+            for i in range(0, len(possiblility.letterTab)):
                 alphabet[possiblility.letterTab[i]]["val"] = lineRand[i]
-            for varLet in possiblility.letterTab:
-                for ind in test:
-                    alphabet[varLet]["val"] = ind
+            str = solveExp(r, dict, rightTab[line], leftTab, rightTab, lineTab)
+            if str == leftTab[line]:
+                print("hello")
+                for i in range(0, len(possiblility.letterTab)):
+                    alphabet[possiblility.letterTab[i]]["constant"] = True
+                r = Ret(alphabet, left=leftTab[line])
+                break
     else:
         #gestion des conflit entre ligne
         if alphabet[letter]["constant"] == True:
@@ -269,26 +271,17 @@ def solveEquivalenceRightOLD(dict, leftTab, rightTab, alphabet, line, letter, li
     const = alphabet[letter]["val"]
     logger.debug("dans solveEquivalenceRight \n {}{}{} letter: {}{}".format(leftTab[line],equTab[line], rightTab[line], letter,  alphabet[letter]["val"]))
     if len(rightTab[line]) > 1:
-        alphabet[letter]["val"] = True
-        r = Ret(alphabet, left=leftTab[line])
-        str = solveExp(r, dict, rightTab[line], leftTab, rightTab, lineTab, equTab)
-        if str != leftTab[line]:
-            alphabet[letter]["val"] = False
-            r = Ret(alphabet, left=leftTab[line])
-            str = solveExp(r, dict, rightTab[line], leftTab, rightTab, lineTab, equTab)
-            if str != leftTab[line]:
-                alphabet[letter]["val"] = None
-                r = Ret(alphabet, left=leftTab[line])
-        else:
-            alphabet[letter]["val"] = False
-            r = Ret(alphabet, left=leftTab[line])
-            str = solveExp(r, dict, rightTab[line], leftTab, rightTab, lineTab, equTab)
+        print("------------------------------")
+        for lineRand in possiblility.randomTab:
+            for i in range(0, len(possiblility.letterTab)):
+                alphabet[possiblility.letterTab[i]]["val"] = lineRand[i]
+            str = solveExp(r, dict, rightTab[line], leftTab, rightTab, lineTab)
             if str == leftTab[line]:
-                alphabet[letter]["val"] = None
+                print("bonjour")
+                for i in range(0, len(possiblility.letterTab)):
+                    alphabet[possiblility.letterTab[i]]["constant"] = True
                 r = Ret(alphabet, left=leftTab[line])
-            else:
-                alphabet[letter]["val"] = True
-                r = Ret(alphabet, left=leftTab[line])
+                break
     else:
         #gestion des conflit entre ligne
         if alphabet[letter]["constant"] == True:
@@ -311,36 +304,26 @@ def solveEquivalenceRightOLD(dict, leftTab, rightTab, alphabet, line, letter, li
     return r
 
 
-def solveImplicationRight(dict, leftTab, rightTab, alphabet, line, letter, lineTab, equTab):
+def solveImplicationRight(dict, leftTab, rightTab, alphabet, line, letter, lineTab, equTab, possiblility):
 
     Ret = collections.namedtuple('Ret', ['alpha', 'left'])
-    logger.debug("dans solveImplicationRight \n {}{}{} letter: {}{}".format(leftTab[line],equTab[line], rightTab[line], letter,  alphabet[letter]["val"]))
+    logger.debug("dans solveImplicationRight \n {}{}{} letter: {}{}{}".format(leftTab[line],equTab[line], rightTab[line], letter,  alphabet[letter]["val"], len(rightTab[line])))
     r = Ret(alphabet, left=leftTab[line])
     const = alphabet[letter]["val"]
     if leftTab[line] == '0':
         alphabet[letter]["val"] = None
         return r
     if len(rightTab[line]) > 1:
-        alphabet[letter]["val"] = True
-        r = Ret(alphabet, left=leftTab[line])
-        str = solveExp(r, dict, rightTab[line], leftTab, rightTab, lineTab, equTab)
-        if str != leftTab[line]:
-            alphabet[letter]["val"] = False
-            r = Ret(alphabet, left=leftTab[line])
-            str = solveExp(r, dict, rightTab[line], leftTab, rightTab, lineTab, equTab)
-            if str != leftTab[line]:
-                alphabet[letter]["val"] = None
-                r = Ret(alphabet, left=leftTab[line])
-        else:
-            alphabet[letter]["val"] = False
-            r = Ret(alphabet, left=leftTab[line])
+        print("------------------------------")
+        for lineRand in possiblility.randomTab:
+            for i in range(0, len(possiblility.letterTab)):
+                alphabet[possiblility.letterTab[i]]["val"] = lineRand[i]
             str = solveExp(r, dict, rightTab[line], leftTab, rightTab, lineTab, equTab)
             if str == leftTab[line]:
-                alphabet[letter]["val"] = None
+                for i in range(0, len(possiblility.letterTab)):
+                    alphabet[possiblility.letterTab[i]]["constant"] = True
                 r = Ret(alphabet, left=leftTab[line])
-            else:
-                alphabet[letter]["val"] = True
-                r = Ret(alphabet, left=leftTab[line])
+                break
     else:
         #gestion des conflit entre ligne
         if alphabet[letter]["constant"] == True:
@@ -388,6 +371,7 @@ def parseQuery(dict, leftTab, rightTab, alphabet, queryTab, lineTab, equTab):
     # logger.debug("DICCT {}".format(dict))
     tmp = copy.deepcopy(alphabet)
     tmp2 = list(lineTab)
+    r = Ret(alphabet, left=leftTab[0])
     for letter in dict:
         # tmp = alphabet.copy()
         # tmp2 = lineTab
