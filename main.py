@@ -182,6 +182,7 @@ def solveEquivalenceRight(dict, leftTab, rightTab, alphabet, line, letter, lineT
     logger.debug("+++++++++++entré+++++++++++{}{}{}".format(line, alphabet[letter]["val"], letter))
     logger.debug("leftTab {}".format(leftTab))
     r = Ret(alphabet, left=leftTab[line])
+    const = alphabet[letter]["val"]
     logger.debug("+++++++++++entré+++++++++++|{}|{}|".format(rightTab[line], len(rightTab[line].replace(r"\s    ", ""))))
     if len(rightTab[line]) > 1:
         logger.debug("_____1______")
@@ -212,6 +213,9 @@ def solveEquivalenceRight(dict, leftTab, rightTab, alphabet, line, letter, lineT
     else:
         #gestion des conflit entre ligne
         if alphabet[letter]["constant"] == True:
+            if const != alphabet[letter]["val"]:
+                logger.info("Two values for : {}".format(letter))
+                sys.exit(0)
             if alphabet[letter]["val"] == True and leftTab[line] == "0" :
                 alphabet[letter]["val"] = None
             elif alphabet[letter]["val"] == False and leftTab[line] == "1":
@@ -219,7 +223,7 @@ def solveEquivalenceRight(dict, leftTab, rightTab, alphabet, line, letter, lineT
             return r
         if leftTab[line] == "1":
             alphabet[letter]["val"] = True
-            logger.debug("here".format(letter))
+            logger.debug("here{}".format(letter))
         else:
             logger.debug(leftTab[line])
             alphabet[letter]["val"] = False
