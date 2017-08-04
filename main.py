@@ -4,6 +4,7 @@ from log import *
 import re
 import sys
 import collections
+import copy
 # from find_rule import *
 import find_rule as fr
 # class Rule:
@@ -315,7 +316,14 @@ def parseRightLetter(letter, leftTab, rightTab, r, lineTab, equTab):
 def parseQuery(dict, leftTab, rightTab, alphabet, queryTab, lineTab, equTab):
     Ret = collections.namedtuple('Ret', ['alpha', 'left'])
     #dict indique la position des queries
+    logger.debug("DICCT {}".format(dict))
+    tmp = copy.deepcopy(alphabet)
+    tmp2 = list(lineTab)
     for letter in dict:
+        # tmp = alphabet.copy()
+        # tmp2 = lineTab
+        logger.info("TMP2 {}".format(tmp2))
+        logger.info("COPYYYYYY {}".format(alphabet))
         #on accede au contenu de la key de dict et il faut deux for pour ça
         # logger.debug("dict[letter] {}".format(dict[letter]["right"]))
         for line in dict[letter]["right"]:
@@ -328,19 +336,23 @@ def parseQuery(dict, leftTab, rightTab, alphabet, queryTab, lineTab, equTab):
 
                 r = Ret(alphabet, left=leftTab[line])
                 #alphabet = solveQuery(alphabet, left, right, value,  )
-                logger.info('r1 {}'.format(r))
+                logger.debug('r1 {}'.format(r))
                 r = solveQuery(dict, leftTab, rightTab, alphabet, line, lineTab, equTab)
                 leftTab[line] = r.left
                 lineTab[line] = True
                 # logger.debug("lineTab []".format(lineTab))
                 logger.debug("lineTab {}".format(lineTab))
-                logger.info('r2 {}'.format(r))
+                logger.debug('r2 {}'.format(r))
                 solveRightSide(dict, leftTab, rightTab, alphabet, line, letter, lineTab, equTab)
-                logger.info('r3 {}'.format(r))
-
+                logger.debug('r3 {}'.format(r))
+                # print alphabet
+                # print alphabet
                 #alphabet = handleLeftSide(dict, left[value], right[value], alphabet, query)
         logger.debug("lineTab final {}".format(lineTab))
-    queryResult(queryTab, alphabet)
+        logger.info("{} is {}".format(letter, r.alpha[letter]["val"]))
+        alphabet = copy.deepcopy(tmp)
+        lineTab = list(tmp2)
+    # queryResult(queryTab, alphabet)
     return alphabet
 
 def main(argv):

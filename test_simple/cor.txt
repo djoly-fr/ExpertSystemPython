@@ -1,14 +1,12 @@
 Example input:
-B => A
-D + E => B
-G + H => F
-I + J => G
-G => H
+B => A #true
+D + E => B #true
+G + H => F #true
+I + J => G #true
+G => H #true
 L + M => K
-O + P => L + N
+O + P => L + N #true pb bruteforce
 N => M
-
 =DEIJOP
 #=DEIJP
-[INITIAL FACTS HERE]
-?AFKP
+?AK
