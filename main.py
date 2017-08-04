@@ -310,6 +310,8 @@ def solveImplicationRight(dict, leftTab, rightTab, alphabet, line, letter, lineT
     logger.debug("dans solveImplicationRight \n {}{}{} letter: {}{}{}".format(leftTab[line],equTab[line], rightTab[line], letter,  alphabet[letter]["val"], len(rightTab[line])))
     r = Ret(alphabet, left=leftTab[line])
     const = alphabet[letter]["val"]
+    randLineT = []
+    index = 0
     if leftTab[line] == '0':
         alphabet[letter]["val"] = None
         return r
@@ -320,10 +322,13 @@ def solveImplicationRight(dict, leftTab, rightTab, alphabet, line, letter, lineT
                 alphabet[possiblility.letterTab[i]]["val"] = lineRand[i]
             str = solveExp(r, dict, rightTab[line], leftTab, rightTab, lineTab, equTab)
             if str == leftTab[line]:
+                print ("bonj", lineRand)
+                index += 1
                 for i in range(0, len(possiblility.letterTab)):
                     alphabet[possiblility.letterTab[i]]["constant"] = True
                 r = Ret(alphabet, left=leftTab[line])
                 break
+                #il manque l'implementation, si on a deux fois true ou false, j'ai eu la flemme sorry
     else:
         #gestion des conflit entre ligne
         if alphabet[letter]["constant"] == True:
