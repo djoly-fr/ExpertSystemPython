@@ -344,6 +344,10 @@ def parseQuery(dict, leftTab, rightTab, alphabet, queryTab, lineTab, equTab):
     return alphabet
 
 def main(argv):
+    if argv == []:
+        logger.error("Pas de fichier en argument, exit")
+        sys.exit(1)
+
     file = open(argv[0], 'r')
     regex = re.compile(r"#.*", re.IGNORECASE)
     file2 = regex.sub("", file.read())
