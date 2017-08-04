@@ -1,0 +1,83 @@
+C:\Users\jolyDembele\PycharmProjects\ExpertSystemPython>python main.py error05.txt
+file <_io.TextIOWrapper name='error05.txt' mode='r' encoding='cp1252'>
+[main.py:376] main DEBUG - file
+ L+M=>K
+O+P=>L+N
+N=>M
+=DEIJOP
+
+
+?K
+[main.py:379] main DEBUG - file
+ L+M=>K
+O+P=>L+N
+N=>M
+=DEIJOP
+?K
+[main.py:122] printAll DEBUG - dicEqu {0: {'equ': '=>', 'val': True}, 1: {'equ': '=>', 'val': True}, 2: {'equ': '=>', 'val': True}}
+[main.py:123] printAll DEBUG - left ['L+M', 'O+P', 'N']
+[main.py:124] printAll DEBUG - right ['K', 'L+N', 'M']
+[main.py:125] printAll DEBUG - ewu ['=>', '=>', '=>']
+[main.py:126] printAll DEBUG - letterLine [['L', 'M', 'K'], ['O', 'P', 'L', 'N'], ['N', 'M'], ['D', 'E', 'I', 'J', 'O', 'P'], ['K']]
+[main.py:127] printAll DEBUG - equal[0] ['DEIJOP']
+[main.py:128] printAll DEBUG - query ['K']
+[main.py:129] printAll DEBUG - letterFile ['L', 'M', 'K', 'O', 'P', 'L', 'N', 'N', 'M', 'D', 'E', 'I', 'J', 'O', 'P', 'K']
+[main.py:130] printAll DEBUG - dic {'L': {'letter': 'L', 'val': False, 'constant': False}, 'M': {'letter': 'M', 'val': False, 'constant': False}, 'K': {'letter': 'K', 'val': False, '
+constant': False}, 'O': {'letter': 'O', 'val': True, 'constant': True}, 'P': {'letter': 'P', 'val': True, 'constant': True}, 'N': {'letter': 'N', 'val': False, 'constant': False}, 'D
+': {'letter': 'D', 'val': True, 'constant': True}, 'E': {'letter': 'E', 'val': True, 'constant': True}, 'I': {'letter': 'I', 'val': True, 'constant': True}, 'J': {'letter': 'J', 'val
+': True, 'constant': True}, '1': {'letter': '1', 'val': True, 'constant': True}, '0': {'letter': '0', 'val': False, 'constant': True}}
+[main.py:325] parseQuery INFO - ---------debut recherche letter K----------
+[main.py:326] parseQuery INFO - letter presente dans ligne [0]----------
+[main.py:136] solveQuery DEBUG - dans SolveQuery
+[main.py:137] solveQuery DEBUG - L+M => K
+[main.py:295] parseRightLetter DEBUG - ___parseRightLetter___ letter: L False
+[main.py:298] parseRightLetter DEBUG - [1]
+[main.py:300] parseRightLetter DEBUG - line O+P => L+N
+[main.py:303] parseRightLetter DEBUG - O+P => L+N start solve query for letter L
+[main.py:136] solveQuery DEBUG - dans SolveQuery
+[main.py:137] solveQuery DEBUG - O+P => L+N
+[main.py:153] solveQuery DEBUG - resultat de exp O+P => L+N : gauche = 1
+[main.py:307] parseRightLetter DEBUG - 1 => L+N start solverightside letter L
+
+|||||||
+vvvvvvv
+[main.py:233] solveImplicationRight DEBUG - dans solveImplicationRight
+ 1=>L+N letter tester : L
+[main.py:244] solveImplicationRight DEBUG - 1=>L+N start solveExp test lettre : L val: True
+[main.py:295] parseRightLetter DEBUG - ___parseRightLetter___ letter: L True
+[main.py:298] parseRightLetter DEBUG - [1]
+[main.py:300] parseRightLetter DEBUG - line 1 => L+N   ## ON NE RENTRE JAMAIS DANS SOLVE QUERY CAR LA LIGNE EST MARQUER DEJA UTILISER
+[main.py:295] parseRightLetter DEBUG - ___parseRightLetter___ letter: N False
+[main.py:298] parseRightLetter DEBUG - [1]
+[main.py:300] parseRightLetter DEBUG - line 1 => L+N
+[main.py:252] solveImplicationRight DEBUG - 1=>L+N start2 solveExp test lettre : L val: False
+[main.py:295] parseRightLetter DEBUG - ___parseRightLetter___ letter: L False
+[main.py:298] parseRightLetter DEBUG - [1]
+[main.py:300] parseRightLetter DEBUG - line 1 => L+N
+[main.py:295] parseRightLetter DEBUG - ___parseRightLetter___ letter: N False
+[main.py:298] parseRightLetter DEBUG - [1]
+[main.py:300] parseRightLetter DEBUG - line 1 => L+N
+[main.py:255] solveImplicationRight DEBUG - dans if {}
+[main.py:290] solveImplicationRight DEBUG - sortie solveImplicationRight
+ 1=>L+N letter: LNone
+ ^^^^^^
+ ||||||
+
+[main.py:295] parseRightLetter DEBUG - ___parseRightLetter___ letter: M False
+[main.py:298] parseRightLetter DEBUG - [2]
+[main.py:300] parseRightLetter DEBUG - line N => M
+[main.py:303] parseRightLetter DEBUG - N => M start solve query for letter M
+[main.py:136] solveQuery DEBUG - dans SolveQuery
+[main.py:137] solveQuery DEBUG - N => M
+[main.py:295] parseRightLetter DEBUG - ___parseRightLetter___ letter: N False
+[main.py:298] parseRightLetter DEBUG - [1]
+[main.py:300] parseRightLetter DEBUG - line 1 => L+N
+[main.py:153] solveQuery DEBUG - resultat de exp N => M : gauche = 0
+[main.py:307] parseRightLetter DEBUG - 0 => M start solverightside letter M
+[main.py:233] solveImplicationRight DEBUG - dans solveImplicationRight
+ 0=>M letter tester : M
+[main.py:153] solveQuery DEBUG - resultat de exp L+M => K : gauche = 0
+[main.py:233] solveImplicationRight DEBUG - dans solveImplicationRight
+ 0=>K letter tester : K
+[main.py:351] parseQuery DEBUG - lineTab final [True, True, True, False, False]
+[main.py:352] parseQuery INFO - K is None
