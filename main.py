@@ -301,7 +301,7 @@ def parseRightLetter(letter, leftTab, rightTab, r, lineTab, equTab):
     for line in tab:
         if lineTab[line] == False:
             r = Ret(r.alpha, left=leftTab[line])
-            r = solveQuery(dict, leftTab, rightTab, r.alpha, line, lineTab)
+            r = solveQuery(dict, leftTab, rightTab, r.alpha, line, lineTab, equTab)
             leftTab[line] = r.left
             lineTab[line] = True
             logger.debug("lineTab[line] {} {} ".format(lineTab[line], line))
@@ -356,7 +356,7 @@ def main(argv):
     logger.debug('file\n {}'.format(file2))
 
     leftTab = re.findall(".*[A-Z()!]\s*(?=\=>)|.*[A-Z()!]\s*(?=<\=>)", file2)
-    rightTab = re.findall("(?<=\=>).*[A-Z()!]\s*(?=\n)|(?<=<\=>).*[A-Z()!\s*(?=\n)", file2)
+    rightTab = re.findall("(?<=\=>).*[A-Z()!]\s*(?=\n)|(?<=<\=>).*[A-Z()!]\s*(?=\n)", file2)
     equTab = re.findall("=>|<=>", file2)
     equalTab = re.findall("(?<=\n=).*", file2)
     queryTab = re.findall("(?<=\n\?).*", file2)
