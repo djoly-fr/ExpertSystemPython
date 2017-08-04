@@ -235,11 +235,15 @@ def solveEquivalenceRight(dict, leftTab, rightTab, alphabet, line, letter, lineT
 
 
 def solveImplicationRight(dict, leftTab, rightTab, alphabet, line, letter, lineTab, equTab):
+
     Ret = collections.namedtuple('Ret', ['alpha', 'left'])
     logger.debug("+++++++++++entré+++++++++++{}{}{}".format(line, alphabet[letter]["val"], letter))
     logger.debug("leftTab {}".format(leftTab))
     r = Ret(alphabet, left=leftTab[line])
     logger.debug("+++++++++++entré+++++++++++|{}|{}|".format(rightTab[line], len(rightTab[line].replace(r"\s    ", ""))))
+    if leftTab[line] == '0':
+        alphabet[letter]["val"] = None
+        return r
     if len(rightTab[line]) > 1:
         logger.debug("____Operation a droite______")
         alphabet[letter]["val"] = True
