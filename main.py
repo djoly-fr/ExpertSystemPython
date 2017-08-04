@@ -150,7 +150,7 @@ def solveQuery(dict, leftTab, rightTab, alphabet, line, lineTab, equTab):
             retExp = "1"
         else:
             retExp = "0"
-    logger.debug("resultat de exp {} {} {} {}".format(leftTab[line], equTab[line], rightTab[line], retExp))
+    logger.debug("resultat de exp {} {} {} : gauche = {}".format(leftTab[line], equTab[line], rightTab[line], retExp))
     r = Ret(alphabet, left=retExp)
     return r
 
@@ -230,7 +230,7 @@ def solveEquivalenceRight(dict, leftTab, rightTab, alphabet, line, letter, lineT
 def solveImplicationRight(dict, leftTab, rightTab, alphabet, line, letter, lineTab, equTab):
 
     Ret = collections.namedtuple('Ret', ['alpha', 'left'])
-    logger.debug("dans solveImplicationRight \n {}{}{} letter: {}{}".format(leftTab[line],equTab[line], rightTab[line], letter,  alphabet[letter]["val"]))
+    logger.debug("dans solveImplicationRight \n {}{}{} letter tester : {}".format(leftTab[line],equTab[line], rightTab[line], letter,  alphabet[letter]["val"]))
     r = Ret(alphabet, left=leftTab[line])
     const = alphabet[letter]["val"]
     if leftTab[line] == '0':
@@ -239,17 +239,29 @@ def solveImplicationRight(dict, leftTab, rightTab, alphabet, line, letter, lineT
     if len(rightTab[line]) > 1:
         alphabet[letter]["val"] = True
         r = Ret(alphabet, left=leftTab[line])
+        logger.debug("{}{}{} start solveExp test lettre : {} val: {}".format(leftTab[line], equTab[line],
+                                                                                      rightTab[line], letter,
+                                                                                      alphabet[letter]["val"], alphabet[letter]["val"] ))
         str = solveExp(r, dict, rightTab[line], leftTab, rightTab, lineTab, equTab)
         if str != leftTab[line]:
             alphabet[letter]["val"] = False
             r = Ret(alphabet, left=leftTab[line])
+            logger.debug("{}{}{} start2 solveExp test lettre : {} val: {}".format(leftTab[line], equTab[line],
+                                                                                 rightTab[line], letter,
+                                                                                 alphabet[letter]["val"],
+                                                                                 alphabet[letter]["val"]))
             str = solveExp(r, dict, rightTab[line], leftTab, rightTab, lineTab, equTab)
             if str != leftTab[line]:
+                logger.debug('dans if {}')
                 alphabet[letter]["val"] = None
                 r = Ret(alphabet, left=leftTab[line])
         else:
             alphabet[letter]["val"] = False
             r = Ret(alphabet, left=leftTab[line])
+            logger.debug("{}{}{} start3 solveExp test lettre : {} val: {}".format(leftTab[line], equTab[line],
+                                                                                 rightTab[line], letter,
+                                                                                 alphabet[letter]["val"],
+                                                                                 alphabet[letter]["val"]))
             str = solveExp(r, dict, rightTab[line], leftTab, rightTab, lineTab, equTab)
             if str == leftTab[line]:
                 alphabet[letter]["val"] = None
@@ -267,7 +279,7 @@ def solveImplicationRight(dict, leftTab, rightTab, alphabet, line, letter, lineT
             if alphabet[letter]["val"] == False and leftTab[line] == "1":
                 logger.debug('conflit entre ligne')
                 alphabet[letter]["val"] = None
-            logger.debug("sortie solveImplicationRight \n {}{}{} letter: {}{}".format(leftTab[line],equTab[line], rightTab[line], letter,  alphabet[letter]["val"]))
+            logger.debug("sortie2 solveImplicationRight \n {}{}{} letter: {}{}".format(leftTab[line],equTab[line], rightTab[line], letter,  alphabet[letter]["val"]))
             return r
         if leftTab[line] == "1":
             alphabet[letter]["val"] = True
@@ -280,17 +292,19 @@ def solveImplicationRight(dict, leftTab, rightTab, alphabet, line, letter, lineT
 
 
 def parseRightLetter(letter, leftTab, rightTab, r, lineTab, equTab):
-    logger.debug("___parseRightLetter___ letter: {} {}".format( letter,  r.alpha[letter]["val"]))
+    logger.debug("___parseRightLetter___ letter: {} {}".format(letter, r.alpha[letter]["val"]))
     tab = findLetterRightSide(letter, rightTab)
     Ret = collections.namedtuple('Ret', ['alpha', 'left'])
     logger.debug(tab)
     for line in tab:
+        logger.debug('line {} {} {} '.format(leftTab[line],equTab[line], rightTab[line]))
         if lineTab[line] == False:
             r = Ret(r.alpha, left=leftTab[line])
+            logger.debug("{} {} {} start solve query for letter {}".format(leftTab[line],equTab[line], rightTab[line], letter))
             r = solveQuery(dict, leftTab, rightTab, r.alpha, line, lineTab, equTab)
             leftTab[line] = r.left
             lineTab[line] = True
-            # logger.debug("lineTab[line] {} {} ".format(lineTab[line], line))
+            logger.debug("{} {} {} start solverightside letter {}".format(leftTab[line], equTab[line], rightTab[line], letter))
             r = solveRightSide({}, leftTab, rightTab, r.alpha, line, letter, lineTab, equTab)
     return r
 
@@ -322,7 +336,7 @@ def parseQuery(dict, leftTab, rightTab, alphabet, queryTab, lineTab, equTab):
 
                 r = Ret(alphabet, left=leftTab[line])
                 #alphabet = solveQuery(alphabet, left, right, value,  )
-                logger.debug('r1 {}'.format(r))
+                # logger.debug('r1 {}'.format(r))
                 r = solveQuery(dict, leftTab, rightTab, alphabet, line, lineTab, equTab)
                 leftTab[line] = r.left
                 lineTab[line] = True
