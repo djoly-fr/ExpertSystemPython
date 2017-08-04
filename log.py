@@ -6,7 +6,7 @@ handler.setFormatter(formatter)
 
 #Choisir le niveau de log
 handler.setLevel(logging.DEBUG)
-# handler.setLevel(logging.INFO)
+#handler.setLevel(logging.INFO)
 #
 logger = logging.getLogger()
 logger.setLevel(logging.DEBUG)

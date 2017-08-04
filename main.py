@@ -167,19 +167,103 @@ def solveExp(r, dict, currentLine, leftTab, rightTab, lineTab, equTab):
     currentLine = fr.findXor(r, dict, currentLine, leftTab, rightTab, lineTab, equTab)
     return currentLine   #return le string de l exp, a la fin on aura 0 ou 1
 
+#random degueu
+def recurs(tab, number):
+    i = 0
+    tab2 = []
+    for i in range(0, number):
+        rand = random.randint(0, 1)
+        if rand == 1:
+            tab2.append(True)
+        else:
+            # print rand
+            tab2.append(False)
+    if tab2 not in tab:
+        # print ("ok", tab2)
+        tab.append(tab2)
+    return tab
+
+def random_tab(nbLetter)
+    tab = []
+    i = 0
+    # nbLetter = 10
+    pb = pow(2, nbLetter)
+    print 'pb' , pb
+    while (len(tab) < pb):
+        tab = recurs(tab, nbLetter)
+        i += 1
+    print tab
+    print len(tab)
+
+    print i
+    return tab
+
+
+def fetchVarLetter(dict, leftTab, rightTab, alphabet, line, letter, lineTab, equTab):
+    rightLetter = re.findall("[A-Z]", rightTab[line])
+    Ret = collections.namedtuple('Ret', ['letterTab', 'randomTab'])
+    tab = []
+    for letter in rightLetter:
+        if alphabet[letter]["constant"] == False:
+            if letter not in tab:
+                tab.append(letter)
+    randomTab = random_tab(len(tab))
+    r = Ret(tab, randomTab= randomTab)
+    return r
+
+
 #bruteforce pour le coté droit, il teste True, apres False
 def solveRightSide(dict, leftTab, rightTab, alphabet, line, letter, lineTab, equTab):
+    possiblility = fetchVarLetter(dict, leftTab, rightTab, alphabet, line, letter, lineTab, equTab)
+
     if equTab[line] == '=>':
         # logger.debug('dans implication')
         return solveImplicationRight(dict, leftTab, rightTab, alphabet, line, letter, lineTab, equTab)
     elif equTab[line] == '<=>':
         # logger.debug('dans equivalence')
-        return solveEquivalenceRight(dict, leftTab, rightTab, alphabet, line, letter, lineTab, equTab)
+        return solveEquivalenceRight(dict, leftTab, rightTab, alphabet, line, letter, lineTab, equTab, possiblility)
     else:
         logger.error('ni implication ni equivqlence')
     return
 
-def solveEquivalenceRight(dict, leftTab, rightTab, alphabet, line, letter, lineTab, equTab):
+def solveEquivalenceRight(dict, leftTab, rightTab, alphabet, line, letter, lineTab, equTab, possiblility):
+    Ret = collections.namedtuple('Ret', ['alpha', 'left'])
+    r = Ret(alphabet, left=leftTab[line])
+    const = alphabet[letter]["val"]
+    logger.debug("dans solveEquivalenceRight \n {}{}{} letter: {}{}".format(leftTab[line],equTab[line], rightTab[line], letter,  alphabet[letter]["val"]))
+    if len(rightTab[line]) > 1:
+        for lineRand in possiblility.randomTab:
+            [A,B,C]
+            [f,f,v]
+            i = 0
+            for i in range(0, len(lineRand)):
+                alphabet[possiblility.letterTab[i]]["val"] = lineRand[i]
+            for varLet in possiblility.letterTab:
+                for ind in test:
+                    alphabet[varLet]["val"] = ind
+    else:
+        #gestion des conflit entre ligne
+        if alphabet[letter]["constant"] == True:
+            if const != alphabet[letter]["val"]:
+                logger.info("Two values for : {}".format(letter))
+                sys.exit(0)
+            if alphabet[letter]["val"] == True and leftTab[line] == "0" :
+                alphabet[letter]["val"] = None
+            elif alphabet[letter]["val"] == False and leftTab[line] == "1":
+                alphabet[letter]["val"] = None
+                logger.debug("sortie \n solveEquivalenceRight \n {}{}{} letter: {}{}".format(leftTab[line],equTab[line], rightTab[line], letter,  alphabet[letter]["val"]))
+            return r
+        if leftTab[line] == "1":
+            alphabet[letter]["val"] = True
+        else:
+            alphabet[letter]["val"] = False
+    alphabet[letter]["constant"] = True
+    logger.debug("sortie \n solveEquivalenceRight \n {}{}{} letter: {}{}".format(leftTab[line],equTab[line], rightTab[line], letter,  alphabet[letter]["val"]))
+    # print(dict, '|' , leftTab, '|' ,  rightTab,  '|' , alphabet, '|' ,  line, '|' ,  letter, '|' ,  lineTab)
+    return r
+
+
+def solveEquivalenceRightOLD(dict, leftTab, rightTab, alphabet, line, letter, lineTab, equTab):
     Ret = collections.namedtuple('Ret', ['alpha', 'left'])
     r = Ret(alphabet, left=leftTab[line])
     const = alphabet[letter]["val"]
