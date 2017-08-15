@@ -13,11 +13,12 @@ def findAnd(r, dict, currentLine, leftTab, rightTab, lineTab, equTab):
         return currentLine
     letter1 = currentLine[positionOP - 1]
     letter2 = currentLine[positionOP + 1]
-    # logger.debug("letter1 {} {}".format(letter1, r.alpha[letter1]["constant"]))
-    if r.alpha[letter1]["constant"] == False:
-        r = parseRightLetter(letter1, leftTab, rightTab, r, lineTab, equTab)
-    if r.alpha[letter2]["constant"] == False:
-        r = parseRightLetter(letter2, leftTab, rightTab, r, lineTab, equTab)
+
+    # # logger.debug("letter1 {} {}".format(letter1, r.alpha[letter1]["constant"]))
+    # if r.alpha[letter1]["constant"] == False:
+    #     r = parseRightLetter(letter1, leftTab, rightTab, r, lineTab, equTab)
+    # if r.alpha[letter2]["constant"] == False:
+    #     r = parseRightLetter(letter2, leftTab, rightTab, r, lineTab, equTab)
     # logger.debug("bool {}".format(r.alpha[letter1]['val']))
     result =  r.alpha[letter1]["val"] and r.alpha[letter2]["val"]
     # logger.debug("result {}".format( result))
@@ -40,8 +41,8 @@ def findExclamation(r, dict, currentLine, leftTab, rightTab, lineTab, equTab):
     letter = currentLine[positionOP + 1]
     # logger.debug("letter1 {}".format(letter))
     # logger.debug("bool {}".format( r.alpha[letter]['val']))
-    if r.alpha[letter]["constant"] == False:
-        r = parseRightLetter(letter, leftTab, rightTab, r, lineTab, equTab)
+    # if r.alpha[letter]["constant"] == False:
+    #     r = parseRightLetter(letter, leftTab, rightTab, r, lineTab, equTab)
     result = not r.alpha[letter]["val"]
     # logger.debug("result  {}".format( result))
     if result == True:
@@ -62,13 +63,13 @@ def findOr(r, dict, currentLine, leftTab, rightTab, lineTab, equTab):
         return currentLine
     letter1 = currentLine[positionOP - 1]
     letter2 = currentLine[positionOP + 1]
-    # logger.debug("letter1 {}".format(letter1 ))
-    if r.alpha[letter1]["constant"] == False:
-        logger.debug("letterLine1 {}".format(letter1))
-        r = parseRightLetter(letter1, leftTab, rightTab, r, lineTab, equTab)
-    if r.alpha[letter2]["constant"] == False:
-        logger.debug("letterLine2")
-        r = parseRightLetter(letter2, leftTab, rightTab, r, lineTab, equTab)
+    # # logger.debug("letter1 {}".format(letter1 ))
+    # if r.alpha[letter1]["constant"] == False:
+    #     logger.debug("letterLine1 {}".format(letter1))
+    #     r = parseRightLetter(letter1, leftTab, rightTab, r, lineTab, equTab)
+    # if r.alpha[letter2]["constant"] == False:
+    #     logger.debug("letterLine2")
+    #     r = parseRightLetter(letter2, leftTab, rightTab, r, lineTab, equTab)
     # logger.debug("bool {}".format(r.alpha[letter1]['val']))
     # logger.debug("bool {}".format(r.alpha[letter1]['val']))
     result = or_rule(r.alpha[letter1]["val"], r.alpha[letter2]["val"])
@@ -92,12 +93,12 @@ def findXor(r, dict, currentLine, leftTab, rightTab, lineTab, equTab):
     letter1 = currentLine[positionOP - 1]
     letter2 = currentLine[positionOP + 1]
     # logger.debug("letter1 {}".format(letter1 ))
-    if r.alpha[letter1]["constant"] == False:
-        logger.debug("letterLine1 {}".format( letter1))
-        r = parseRightLetter(letter1, leftTab, rightTab, r, lineTab, equTab)
-    if r.alpha[letter2]["constant"] == False:
-        logger.debug("letterLine2")
-        r = parseRightLetter(letter2, leftTab, rightTab, r, lineTab, equTab)
+    # if r.alpha[letter1]["constant"] == False:
+    #     logger.debug("letterLine1 {}".format( letter1))
+    #     r = parseRightLetter(letter1, leftTab, rightTab, r, lineTab, equTab)
+    # if r.alpha[letter2]["constant"] == False:
+    #     logger.debug("letterLine2")
+    #     r = parseRightLetter(letter2, leftTab, rightTab, r, lineTab, equTab)
     # logger.debug("bool {}".format(r.alpha[letter1]['val']))
     # logger.debug("bool {}".format(r.alpha[letter1]['val']))
     result = xor_rule(r.alpha[letter1]["val"], r.alpha[letter2]["val"])
