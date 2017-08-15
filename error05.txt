@@ -1,6 +1,7 @@
-L + M => K
-O + P => L + N #true pb bruteforce
 N => M
+O + P => L + N #true pb bruteforce
+L + M => K
+
 =DEIJOP
 #=DEIJP
 #?AFKP

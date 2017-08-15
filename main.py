@@ -287,7 +287,7 @@ def solveImplicationRight(dict, leftTab, rightTab, alphabet, line, letter, lineT
         else:
             logger.debug(leftTab[line])
             alphabet[letter]["val"] = None
-    logger.debug("sortie solveImplicationRight \n {}{}{} letter: {}{}".format(leftTab[line],equTab[line], rightTab[line], letter,  alphabet[letter]["val"]))
+    logger.debug("sortie solveImplicationRight \n {}{}{} letter: {} {}".format(leftTab[line],equTab[line], rightTab[line], letter,  alphabet[letter]["val"]))
     return r
 
 
@@ -313,6 +313,89 @@ def parseRightLetter(letter, leftTab, rightTab, r, lineTab, equTab):
 #rightTab
 #alphabet : dict des letter avec leur valeur et constant ou non
 def parseQuery(dict, leftTab, rightTab, alphabet, queryTab, lineTab, equTab):
+    Ret = collections.namedtuple('Ret', ['alpha', 'left'])
+    #dict indique la position des queries
+    # logger.debug("DICCT {}".format(dict))
+    tmp = copy.deepcopy(alphabet)
+    tmp2 = list(lineTab)
+    for letter in dict:
+        # tmp = alphabet.copy()
+        # tmp2 = lineTab
+        # logger.info("TMP2 {}".format(tmp2))
+        logger.info("---------debut recherche letter {}---------- ".format(letter))
+        logger.info("letter presente dans ligne {}---------- ".format(dict[letter]["right"]))
+        #on accede au contenu de la key de dict et il faut deux for pour ça
+        # logger.debug("dict[letter] {}".format(dict[letter]["right"]))
+        for line in dict[letter]["right"]:
+            if lineTab[line] == False:
+                # print ("line", leftTab[line])
+                # logger.debug('value {}'.format(line))
+                # logger.debug("right[line] {}".format(rightTab[line]))
+                # logger.debug("left {}".format(leftTab))
+                # logger.debug("left[line] {}".format(leftTab[line]))
+
+                r = Ret(alphabet, left=leftTab[line])
+                #alphabet = solveQuery(alphabet, left, right, value,  )
+                # logger.debug('r1 {}'.format(r))
+                r = solveQuery(dict, leftTab, rightTab, alphabet, line, lineTab, equTab)
+                leftTab[line] = r.left
+                lineTab[line] = True
+                # logger.debug("lineTab []".format(lineTab))
+                # logger.debug("lineTab {}".format(lineTab))
+                # logger.debug('r2 {}'.format(r))
+                solveRightSide(dict, leftTab, rightTab, alphabet, line, letter, lineTab, equTab)
+                # logger.debug('r3 {}'.format(r))
+                # print alphabet
+                # print alphabet
+                #alphabet = handleLeftSide(dict, left[value], right[value], alphabet, query)
+        logger.debug("lineTab final {}".format(lineTab))
+        logger.info("{} is {}".format(letter, r.alpha[letter]["val"]))
+        alphabet = copy.deepcopy(tmp)
+        lineTab = list(tmp2)
+    # queryResult(queryTab, alphabet)
+    return alphabet
+
+#
+# Tri les lignes dans l ordre d execution
+#dict : dict des lettres avec les lignes
+#leftTab
+#rightTab
+#alphabet : dict des letter avec leur valeur et constant ou non
+def parseQuery2(letter, dict, leftTab, rightTab, alphabet, queryTab, lineTab, equTab):
+    logger.info('parseQuery2 letter {}'.format(letter))
+    ret = []
+
+    # les ligne ou gauche na que des constant en premier
+    for index in range(len(leftTab)):
+        listLetterLeft = set(re.findall("[A-Z]", leftTab[index]))
+        addLine = True
+        for letter3 in listLetterLeft:
+            if alphabet[letter3]['constant'] == False or lineTab[index] == True:
+                addLine = False
+                break
+        if addLine:
+            ret.append(index)
+            lineTab[index] = True
+            logger.debug('mode constant add line {} in ret'.format(index))
+
+    tab = findLetterRightSide(letter, rightTab)
+    #ret.extend(tab)
+
+    for line in tab:
+        if lineTab[line] == True:
+            continue
+
+        lineTab[line] = True
+        listLetterLeft = set(re.findall("[A-Z]", leftTab[line]))
+        logger.debug('listLetterLeft {}'.format(listLetterLeft))
+        logger.debug(listLetterLeft)
+        for letter2 in listLetterLeft:
+            ret.extend(parseQuery2(letter2, dict, leftTab, rightTab, alphabet, queryTab, lineTab, equTab))
+        ret.extend(tab)
+        logger.debug('mode findLetterRightSide add line {} in ret'.format(tab))
+
+    return ret
+    sys.exit(1)
     Ret = collections.namedtuple('Ret', ['alpha', 'left'])
     #dict indique la position des queries
     # logger.debug("DICCT {}".format(dict))
@@ -400,7 +483,10 @@ def main(argv):
     # determineBool(left, right, dicEqu, dic)
     #dict indique la position des queries
     dict = findQueryLetter(queryTab, leftTab, rightTab)
-    parseQuery(dict, leftTab, rightTab, dic, queryTab, lineTab, equTab)
+    for letter in dict:
+        sortedLine = parseQuery2(letter, dict, leftTab, rightTab, dic, queryTab, lineTab, equTab)
+        logger.debug('sorted Line {}'.format(sortedLine))
+        # RETURN BSQ
     file.close()
 
 #logle resultat de la query
