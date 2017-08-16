@@ -1,0 +1,12 @@
+A + B <=> X
+
+
+Y + C <=> !E | F
+
+#X <=> Z + !E
+
+
+=ABC
+?EF
+
+# valeur de E, pb du brute force avec Y + C => !E # OK

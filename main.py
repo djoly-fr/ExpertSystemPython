@@ -31,7 +31,7 @@ import random
 
 def and_rule(a, b):
     ret = a and b
-    logger.debug("and {} {} {} ".format(a, b, ret))
+    #logger.debug("and {} {} {} ".format(a, b, ret))
     return ret
 
 def impl(a):
@@ -42,13 +42,13 @@ def impl(a):
 
 def xor_rule(a, b):
     ret = (a and not b) or (not a and b)
-    logger.debug("xor {} {} {} ".format( a, b, ret))
-    return ((a and not b) or (not a and b))
+    #logger.debug("xor {} {} {} ".format( a, b, ret))
+    return ret
 
 def or_rule(a, b):
     ret = a or b
-    logger.debug("or {} {} {} ".format(a, b, ret))
-    return (a or b)
+    #logger.debug("or {} {} {} ".format(a, b, ret))
+    return ret
 
 def not_rule(a):
     return (not a)
@@ -110,6 +110,11 @@ def findQueryLetter(query, left, right):
                     dict[l] = {"letter": l, "right": tab}
             i += 1
     return dict
+
+def letterInRight(right):
+    listLetter = set(re.findall("[A-Z]", right))
+    logger.debug('ret letter in right {}'.format(listLetter))
+    return listLetter
 
 def findLetterRightSide(letter, right):
     tab = []
@@ -325,10 +330,14 @@ def solveImplicationRight2(dict, leftTab, rightTab, alphabet, line, lineTab, equ
     #logger.debug("dans solveImplicationRight \n {}{}{} ".format(leftTab[line],equTab[line], rightTab[line]))
     r = Ret(alphabet, left=leftTab[line])
 
+    # si gauche 0 les letter variable a droite sont none
     if leftTab[line] == "0":
-        tmp = False
-    else:
-        tmp = True
+        listLetterRight = letterInRight(rightTab[line])
+        for letter in listLetterRight:
+            if alphabet[letter]['constant'] == False:
+                alphabet[letter]['val'] = None
+        r = Ret(alphabet, left=leftTab[line])
+        return r
 
     if len(rightTab[line]) > 1:
         possiblility = fetchVarLetter(dict, leftTab, rightTab, alphabet, line, lineTab, equTab)
@@ -533,11 +542,13 @@ def parseQuery2(letter, dict, leftTab, rightTab, alphabet, queryTab, lineTab, eq
 
         lineTab[line] = True
         listLetterLeft = set(re.findall("[A-Z]", leftTab[line]))
-        #logger.debug('listLetterLeft {}'.format(listLetterLeft))
-        #logger.debug(listLetterLeft)
+        logger.debug('listLetterLeft {}'.format(listLetterLeft))
         for letter2 in listLetterLeft:
             ret.extend(parseQuery2(letter2, dict, leftTab, rightTab, alphabet, queryTab, lineTab, equTab))
-        ret.extend(tab)
+        for i in tab:
+            if i not in ret:
+                ret.append(i)
+        #ret.extend(tab)
         logger.debug('mode findLetterRightSide add line {} in ret'.format(tab))
 
     return ret
@@ -611,8 +622,8 @@ def main(argv):
             solveRightSide(dict, leftTab, rightTab, alphabet, line, lineTab, equTab)
             #logger.debug('ret r3 {}'.format(r))
 
-            logger.debug('ret solveQuery {}'.format(r))
-            queryResult2(letter, alphabet)
+        logger.debug('ret solveQuery {}'.format(r))
+        queryResult2(letter, alphabet)
             # RETURN BSQ
     file.close()
 
@@ -633,11 +644,23 @@ def queryResult(query, dic):
 def queryResult2(letter, dic):
     tmp = dic[letter]["val"]
     if (tmp == None):
-        logger.info("{} is undetermined".format(letter))
+        logger.info("\n|-------------------|\n"
+                    "|                   |\n"
+                    "|{} is undetermined  |\n"
+                    "|                   |\n"
+                    "|-------------------|".format(letter))
     elif (tmp == True):
-        logger.info("{} is True".format(letter))
+        logger.info("\n|-------------------|\n"
+                    "|                   |\n"
+                    "|{} is True          |\n"
+                    "|                   |\n"
+                    "|-------------------|".format(letter))
     else:
-        logger.info("{} is False".format(letter))
+        logger.info("\n|-------------------|\n"
+                    "|                   |\n"
+                    "|{} is False         |\n"
+                    "|                   |\n"
+                    "|-------------------|".format(letter))
 
 if __name__ == "__main__":
     main(sys.argv[1:])

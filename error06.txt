@@ -1,16 +1,12 @@
-A => X
-X => D
-
-#K <=> E
-B + K => Y
-
-
+A + B <=> X
 
 
 Y + C <=> E
 
-
+X <=> Z + E
 
 
 =ABC
-?DE
+?ZE
+
+# valeur de E ?
