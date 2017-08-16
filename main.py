@@ -564,31 +564,37 @@ def main(argv):
     while file2.find('\n\n') != -1:
         file2 = file2.replace('\n\n', '\n')
     logger.debug('file\n {}'.format(file2))
-
     leftTab = re.findall(".*[A-Z()!]\s*(?=\=>)|.*[A-Z()!]\s*(?=<\=>)", file2)
     rightTab = re.findall("(?<=\=>).*[A-Z()!]\s*(?=\n)|(?<=<\=>).*[A-Z()!]\s*(?=\n)", file2)
     equTab = re.findall("=>|<=>", file2)
     equalTab = re.findall("(?<=\n=).*", file2)
     queryTab = re.findall("(?<=\n\?).*", file2)
-    # tableau tous les lettre pour chaque ligne
-    letterLine = letterForEachLine(file2)
-    # logletterLine
-    #tableau de booleen pour chaque ligne vu, True ou False
-    lineTab = [False] * len(letterLine)
-    #toutes lettre du fichier avec doublon
-    letterFile = []
-    letterFile = re.findall("[A-Z]", file2)
-    # dict pour le savoir si c'est => ou <=>
-    dicEqu = implicationDic(equTab)
-    # dictionnaire des lettres avec leurs valeurs
-    alphabet = letterDicValue(equalTab, letterFile)
-    # putLettersToTrue(dic, equal)
-    printAll(dicEqu, alphabet, leftTab, rightTab, equalTab, queryTab, letterFile, equTab, letterLine)
-    # determineBool(left, right, dicEqu, dic)
-    #dict indique la position des queries
     dict = findQueryLetter(queryTab, leftTab, rightTab)
     for letter in dict:
         logger.info('---- start Solve letter {}------'.format(letter))
+        leftTab = re.findall(".*[A-Z()!]\s*(?=\=>)|.*[A-Z()!]\s*(?=<\=>)", file2)
+        rightTab = re.findall("(?<=\=>).*[A-Z()!]\s*(?=\n)|(?<=<\=>).*[A-Z()!]\s*(?=\n)", file2)
+        equTab = re.findall("=>|<=>", file2)
+        equalTab = re.findall("(?<=\n=).*", file2)
+        queryTab = re.findall("(?<=\n\?).*", file2)
+
+        # tableau tous les lettre pour chaque ligne
+        letterLine = letterForEachLine(file2)
+        # logletterLine
+        #tableau de booleen pour chaque ligne vu, True ou False
+        lineTab = [False] * len(letterLine)
+        #toutes lettre du fichier avec doublon
+        letterFile = []
+        letterFile = re.findall("[A-Z]", file2)
+        # dict pour le savoir si c'est => ou <=>
+        dicEqu = implicationDic(equTab)
+        # dictionnaire des lettres avec leurs valeurs
+        alphabet = letterDicValue(equalTab, letterFile)
+        # putLettersToTrue(dic, equal)
+        printAll(dicEqu, alphabet, leftTab, rightTab, equalTab, queryTab, letterFile, equTab, letterLine)
+        # determineBool(left, right, dicEqu, dic)
+        #dict indique la position des queries
+
         sortedLine = parseQuery2(letter, dict, leftTab, rightTab, alphabet, queryTab, lineTab, equTab)
         logger.debug('sorted Line {}'.format(sortedLine))
         for line in sortedLine:
@@ -605,8 +611,8 @@ def main(argv):
             solveRightSide(dict, leftTab, rightTab, alphabet, line, lineTab, equTab)
             #logger.debug('ret r3 {}'.format(r))
 
-        logger.debug('ret solveQuery {}'.format(r))
-        queryResult(queryTab, alphabet)
+            logger.debug('ret solveQuery {}'.format(r))
+            queryResult2(letter, alphabet)
             # RETURN BSQ
     file.close()
 
@@ -623,6 +629,15 @@ def queryResult(query, dic):
         else:
             logger.info("{} is False".format(q))
 
+#logle resultat de la query pour une letter
+def queryResult2(letter, dic):
+    tmp = dic[letter]["val"]
+    if (tmp == None):
+        logger.info("{} is undetermined".format(letter))
+    elif (tmp == True):
+        logger.info("{} is True".format(letter))
+    else:
+        logger.info("{} is False".format(letter))
 
 if __name__ == "__main__":
     main(sys.argv[1:])
