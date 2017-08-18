@@ -22,8 +22,8 @@ def checkFile(argv):
     #suppression ligne vide
     while file2.find('\n\n') != -1:
         file2 = file2.replace('\n\n', '\n')
-    if file2[0] == '\n':
-        file2.replace('\n', '')
+    # if file2[0] == '\n':
+    #     file2.replace('\n', '')
     logger.debug('file\n {}'.format(file2))
 
     split = file2.split('\n')
