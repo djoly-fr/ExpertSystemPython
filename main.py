@@ -8,6 +8,7 @@ import copy
 # from find_rule import *
 import find_rule as fr
 import random
+from parseFile import checkFile
 
 # class Rule:
 # #
@@ -555,25 +556,23 @@ def parseQuery2(letter, dict, leftTab, rightTab, alphabet, queryTab, lineTab, eq
 
 def main(argv):
 
-    if argv == []:
-        logger.error("Pas de fichier en argument, exit")
-        sys.exit(1)
-    try:  # On essaye de convertir l'année en entier
-        file = open(argv[0], 'r')
-    except:
-        print("Erreur lors de l ouverture du fichier,exit")
-        sys.exit(1)
 
-    print ('file', file)
-    regex = re.compile(r"#.*", re.IGNORECASE)
-    file2 = regex.sub("", file.read())
-    file2 = file2.replace(" ", "")
+    file2 = checkFile(argv)
+
+    logger.info('file ok')
+
+    # regex = re.compile(r"#.*", re.IGNORECASE)
+    # file2 = regex.sub("", file.read())
+    # file2 = file2.replace(" ", "")
+    #
+
+    #
+    # logger.debug('file\n {}'.format(file2))
+    # while file2.find('\n\n') != -1:
 
 
+    logger.info('file ok')
 
-    logger.debug('file\n {}'.format(file2))
-    while file2.find('\n\n') != -1:
-        file2 = file2.replace('\n\n', '\n')
     logger.debug('file\n {}'.format(file2))
     leftTab = re.findall(".*[A-Z()!]\s*(?=\=>)|.*[A-Z()!]\s*(?=<\=>)", file2)
     rightTab = re.findall("(?<=\=>).*[A-Z()!]\s*(?=\n)|(?<=<\=>).*[A-Z()!]\s*(?=\n)", file2)

@@ -1,0 +1,9 @@
+
+Q => D
+
+
+
+#=ABC
+=AFG
+?D
+#ERROR qd le fichier commence par un \n
