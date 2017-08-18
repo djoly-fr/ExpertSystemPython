@@ -6,7 +6,9 @@ G => H #true
 L + M => K
 O + P => L + N #true pb bruteforce
 N => M
-=DEIJOP
-#=DEIJP
-#?AFKP
-?K
+#=DEIJOP
+=DEIJP
+
+?AFKP
+
+#?K

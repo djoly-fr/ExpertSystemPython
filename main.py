@@ -643,10 +643,11 @@ def queryResult(query, dic):
 #logle resultat de la query pour une letter
 def queryResult2(letter, dic):
     tmp = dic[letter]["val"]
+    ## a la fin si letter indeterminer , elle est false
     if (tmp == None):
         logger.info("\n|-------------------|\n"
-                    "|                   |\n"
-                    "|{} is undetermined  |\n"
+                    "| resultat undetermined donc : |\n"
+                    "|{} is false        |\n"
                     "|                   |\n"
                     "|-------------------|".format(letter))
     elif (tmp == True):
