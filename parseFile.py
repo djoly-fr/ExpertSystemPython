@@ -22,6 +22,12 @@ def checkFile(argv):
     #suppression ligne vide
     while file2.find('\n\n') != -1:
         file2 = file2.replace('\n\n', '\n')
+    # suppresion premier saut de ligne
+    test = re.findall("^\n", file2)
+    if test[0] == '\n':
+        file2 = file2.replace('\n', '', 1)
+   # logger.debug('file2\n {}'.format(file2))
+
     # if file2[0] == '\n':
     #     file2.replace('\n', '')
     logger.debug('file\n {}'.format(file2))
@@ -38,17 +44,15 @@ def checkFile(argv):
             logger.debug('error in line {}'.format(line))
             sys.exit(1)
 
-    sys.exit(1)
+    #sys.exit(1)
     #check une seul ligne d initialisation
     equalTab = re.findall("(?<=\n=).*", file2)
     if len(equalTab) > 1:
         print("Erreur deux lignes d initialisation")
-    sys.exit(1)
+    logger.debug('file ok')
+    #sys.exit(1)
+    file.close()
 
-    # find = re.findall(".*[A-Z()!]\s*(?=\=>)|.*[A-Z()!]\s*(?=<\=>)", file2)
-    # rightTab = re.findall("(?<=\=>).*[A-Z()!]\s*(?=\n)|(?<=<\=>).*[A-Z()!]\s*(?=\n)", file2)
-    # equTab = re.findall("=>|<=>", file2)
-    #equalTab = re.findall("(?<=\n=).*", file2)
-    # queryTab = re.findall("(?<=\n\?).*", file2)
-    #logger.debug('equTab {}'.format(equalTab))
+
+
     return file2

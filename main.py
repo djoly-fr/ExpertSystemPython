@@ -624,7 +624,6 @@ def main(argv):
         logger.debug('ret solveQuery {}'.format(r))
         queryResult2(letter, alphabet)
             # RETURN BSQ
-    file.close()
 
 #logle resultat de la query
 def queryResult(query, dic):
