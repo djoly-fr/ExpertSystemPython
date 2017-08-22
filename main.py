@@ -535,30 +535,28 @@ def parseQuery2(letter, dict, leftTab, rightTab, alphabet, queryTab, lineTab, eq
     return ret
 
 def main(argv):
-
-
     file2 = checkFile(argv)
 
-    # logger.info('file ok')
-
-    # regex = re.compile(r"#.*", re.IGNORECASE)
-    # file2 = regex.sub("", file.read())
-    # file2 = file2.replace(" ", "")
-    #
-
-    #
-    # logger.debug('file\n {}'.format(file2))
-    # while file2.find('\n\n') != -1:
-
-
-    # logger.info('file ok')
-
-    # logger.debug('file\n {}'.format(file2))
     leftTab = re.findall(".*[A-Z()!]\s*(?=\=>)|.*[A-Z()!]\s*(?=<\=>)", file2)
     rightTab = re.findall("(?<=\=>).*[A-Z()!]\s*(?=\n)|(?<=<\=>).*[A-Z()!]\s*(?=\n)", file2)
     equTab = re.findall("=>|<=>", file2)
     equalTab = re.findall("(?<=\n=).*", file2)
     queryTab = re.findall("(?<=\n\?).*", file2)
+    if len(leftTab) == 0:
+        print "error left side of rule"
+        sys.exit(0)
+    elif len(rightTab) == 0:
+        print "error right side of rule"
+        sys.exit(0)
+    elif len(equTab) == 0:
+        print "error equivalence"
+        sys.exit(0)
+    elif len(equalTab) == 0:
+        print "error equal"
+        sys.exit(0)
+    elif len(queryTab) == 0:
+        print "error query"
+        sys.exit(0)
     dict = findQueryLetter(queryTab, leftTab, rightTab)
     for letter in dict:
         # logger.info('---- start Solve letter {}------'.format(letter))

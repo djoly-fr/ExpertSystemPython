@@ -38,7 +38,7 @@ def checkFile(argv):
         logger.debug('test {}'.format(line))
         if line == '':
             logger.debug('string vide')
-            sys.exit(0)
+            # sys.exit(0)
         elif '=>' in line or line[0] == '=' or line[0] == '?':
             logger.debug('{} ok'.format(line))
         else:
