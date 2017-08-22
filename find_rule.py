@@ -1,3 +1,5 @@
+#!/usr/bin/env python
+# coding: utf-8
 import re
 import sys
 import collections
@@ -13,7 +15,6 @@ def findAnd(r, dict, currentLine, leftTab, rightTab, lineTab, equTab):
         return currentLine
     letter1 = currentLine[positionOP - 1]
     letter2 = currentLine[positionOP + 1]
-
     # # logger.debug("letter1 {} {}".format(letter1, r.alpha[letter1]["constant"]))
     # if r.alpha[letter1]["constant"] == False:
     #     r = parseRightLetter(letter1, leftTab, rightTab, r, lineTab, equTab)
