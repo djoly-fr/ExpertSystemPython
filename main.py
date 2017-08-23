@@ -541,7 +541,10 @@ def main(argv):
     rightTab = re.findall("(?<=\=>).*[A-Z()!]\s*(?=\n)|(?<=<\=>).*[A-Z()!]\s*(?=\n)", file2)
     equTab = re.findall("=>|<=>", file2)
     equalTab = re.findall("(?<=\n=).*", file2)
-    queryTab = re.findall("(?<=\n\?).*", file2)
+    queryTab = re.findall("(?<=\n\?)[A-Z]*$", file2)
+    errChar = re.findall("[^A-Z=>+|\(\)\^\!?\d\s]", file2)
+    nbLetter = re.findall("[A-Z]{2,}(?=\=>)|[A-Z]{2,}(?=<\=>)", file2)
+    
     if len(leftTab) == 0:
         print "error left side of rule"
         sys.exit(0)
@@ -557,15 +560,18 @@ def main(argv):
     elif len(queryTab) == 0:
         print "error query"
         sys.exit(0)
+    elif len(errChar) != 0:
+        print "None accepted character"
+        sys.exit(0)
+    print "equery", queryTab
     dict = findQueryLetter(queryTab, leftTab, rightTab)
     for letter in dict:
         # logger.info('---- start Solve letter {}------'.format(letter))
         leftTab = re.findall(".*[A-Z()!]\s*(?=\=>)|.*[A-Z()!]\s*(?=<\=>)", file2)
         rightTab = re.findall("(?<=\=>).*[A-Z()!]\s*(?=\n)|(?<=<\=>).*[A-Z()!]\s*(?=\n)", file2)
         equTab = re.findall("=>|<=>", file2)
-        equalTab = re.findall("(?<=\n=).*", file2)
-        queryTab = re.findall("(?<=\n\?).*", file2)
-
+        equalTab = re.findall("(?<=\n=)[A-Z\s]*[\n]", file2)
+        queryTab = re.findall("(?<=\n\?)[A-Z\s]$", file2)
         # tableau tous les lettre pour chaque ligne
         letterLine = letterForEachLine(file2)
         # logletterLine
