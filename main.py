@@ -470,7 +470,7 @@ def main(argv):
     # nbLetter = re.findall("[A-Z]{2,}", ruleLines)
     r = re.compile("[A-Z]{2,}")
     newlist = filter(r.match, ruleLines)
-    print "newlist", errEqual
+    print "newlist", len(errEqual)
 
     # print "nbLetter", nbLetter
     if len(leftTab) == 0:
@@ -482,7 +482,7 @@ def main(argv):
     elif len(equTab) == 0:
         print "error equivalence"
         sys.exit(0)
-    elif len(errEqual) != 0:
+    elif errEqual[0] != "":
         print "error equal"
         sys.exit(0)
     elif len(queryTab) == 0:
