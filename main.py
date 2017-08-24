@@ -192,6 +192,7 @@ def fetchVarLetter(dict, leftTab, rightTab, alphabet, line, lineTab, equTab):
             if letter not in tab:
                 tab.append(letter)
     randomTab = random_tab(len(tab))
+    logger.debug('tab des letter a tester {}'.format( tab))
     r = Ret(tab, randomTab= randomTab)
     return r
 
@@ -207,54 +208,6 @@ def solveRightSide(dict, leftTab, rightTab, alphabet, line, lineTab, equTab):
         logger.error('ni implication ni equivqlence')
     return
 
-def solveEquivalenceRight(dict, leftTab, rightTab, alphabet, line, letter, lineTab, equTab):
-    print "solveEquivalenceRight"
-    Ret = collections.namedtuple('Ret', ['alpha', 'left'])
-    r = Ret(alphabet, left=leftTab[line])
-    const = alphabet[letter]["val"]
-    # logger.debug("dans solveEquivalenceRight \n {}{}{} letter: {}{}".format(leftTab[line],equTab[line], rightTab[line], letter,  alphabet[letter]["val"]))
-    if len(rightTab[line]) > 1:
-        alphabet[letter]["val"] = True
-        r = Ret(alphabet, left=leftTab[line])
-        str = solveExp(r, dict, rightTab[line], leftTab, rightTab, lineTab, equTab)
-        if str != leftTab[line]:
-            alphabet[letter]["val"] = False
-            r = Ret(alphabet, left=leftTab[line])
-            str = solveExp(r, dict, rightTab[line], leftTab, rightTab, lineTab, equTab)
-            if str != leftTab[line]:
-                alphabet[letter]["val"] = None
-                r = Ret(alphabet, left=leftTab[line])
-        else:
-            alphabet[letter]["val"] = False
-            r = Ret(alphabet, left=leftTab[line])
-            str = solveExp(r, dict, rightTab[line], leftTab, rightTab, lineTab, equTab)
-            if str == leftTab[line]:
-                alphabet[letter]["val"] = None
-                r = Ret(alphabet, left=leftTab[line])
-            else:
-                alphabet[letter]["val"] = True
-                r = Ret(alphabet, left=leftTab[line])
-    else:
-        letter = rightTab[line]
-        #gestion des conflit entre ligne
-        if alphabet[letter]["constant"] == True:
-            if const != alphabet[letter]["val"]:
-                logger.info("Two values for : {}".format(letter))
-                sys.exit(0)
-            if alphabet[letter]["val"] == True and leftTab[line] == "0" :
-                alphabet[letter]["val"] = None
-            elif alphabet[letter]["val"] == False and leftTab[line] == "1":
-                alphabet[letter]["val"] = None
-                # logger.debug("sortie \n solveEquivalenceRight \n {}{}{} letter: {}{}".format(leftTab[line],equTab[line], rightTab[line], letter,  alphabet[letter]["val"]))
-            return r
-        if leftTab[line] == "1":
-            alphabet[letter]["val"] = True
-        else:
-            alphabet[letter]["val"] = False
-    alphabet[letter]["constant"] = True
-    # logger.debug("sortie \n solveEquivalenceRight \n {}{}{} letter: {}{}".format(leftTab[line],equTab[line], rightTab[line], letter,  alphabet[letter]["val"]))
-    # print(dict, '|' , leftTab, '|' ,  rightTab,  '|' , alphabet, '|' ,  line, '|' ,  letter, '|' ,  lineTab)
-    return r
 
 def solveEquivalenceRight2(dict, leftTab, rightTab, alphabet, line, lineTab, equTab):
     print "solveEquivalenceRight2"
@@ -266,19 +219,27 @@ def solveEquivalenceRight2(dict, leftTab, rightTab, alphabet, line, lineTab, equ
     else:
         tmp = True
     if len(rightTab[line]) > 1:
-        possiblility = fetchVarLetter(dict, leftTab, rightTab, alphabet, line, lineTab, equTab)
-        # logger.debug('possibility {}'.format(possiblility))
-        # logger.debug("-------------dans brute force ----------------- \n {}{}{} ".format(leftTab[line], equTab[line],
-        for lineRand in possiblility.randomTab:
-            for i in range(0, len(possiblility.letterTab)):
-                alphabet[possiblility.letterTab[i]]["val"] = lineRand[i]
-            str = solveExp(r, dict, rightTab[line], leftTab, rightTab, lineTab, equTab)
-            # logger.debug('brute force :  str: {} '.format(str))
-            if str == leftTab[line]:
+        possibility = fetchVarLetter(dict, leftTab, rightTab, alphabet, line, lineTab, equTab)
+        if len(possibility.letterTab) != 0:
+            # logger.debug('possibility {}'.format(possiblility))
+            # logger.debug("-------------dans brute force ----------------- \n {}{}{} ".format(leftTab[line], equTab[line],
+            for lineRand in possiblility.randomTab:
                 for i in range(0, len(possiblility.letterTab)):
-                    alphabet[possiblility.letterTab[i]]["constant"] = True
-                r = Ret(alphabet, left=leftTab[line])
-                break
+                    alphabet[possiblility.letterTab[i]]["val"] = lineRand[i]
+                str = solveExp(r, dict, rightTab[line], leftTab, rightTab, lineTab, equTab)
+                # logger.debug('brute force :  str: {} '.format(str))
+                if str == leftTab[line]:
+                    for i in range(0, len(possiblility.letterTab)):
+                        alphabet[possiblility.letterTab[i]]["constant"] = True
+                    r = Ret(alphabet, left=leftTab[line])
+                    break
+        else:
+            str = solveExp(r, dict, rightTab[line], leftTab, rightTab, lineTab, equTab)
+            logger.debug('pas de letter a tester pour le brut force on continue {}'.format(str))
+            if str != leftTab[line]:
+                print 'solveEquivalenceRight2 error conflicts rules'
+                sys.exit(1)
+
     else:
         letter = rightTab[line]
         #gestion des conflit entre ligne
@@ -287,24 +248,29 @@ def solveEquivalenceRight2(dict, leftTab, rightTab, alphabet, line, lineTab, equ
                 logger.info("Two values for : {}".format(letter))
                 sys.exit(0)
             if alphabet[letter]["val"] == True and leftTab[line] == "0" :
-                alphabet[letter]["val"] = None
+                changeLetter(alphabet, letter, None)
+                #alphabet[letter]["val"] = None
             elif alphabet[letter]["val"] == False and leftTab[line] == "1":
-                alphabet[letter]["val"] = None
+                changeLetter(alphabet, letter, None)
+                #alphabet[letter]["val"] = None
                 # logger.debug("sortie \n solveEquivalenceRight \n {}{}{} letter: {}{}".format(leftTab[line],equTab[line], rightTab[line], letter,  alphabet[letter]["val"]))
             return r
         if leftTab[line] == "1":
-            alphabet[letter]["val"] = True
+            changeLetter(alphabet, letter, True)
+            #alphabet[letter]["val"] = True
         else:
-            alphabet[letter]["val"] = False
-        alphabet[letter]["constant"] = True
+            changeLetter(alphabet, letter, False)
+            #alphabet[letter]["val"] = False
+        #alphabet[letter]["constant"] = True
     # logger.debug("sortie \n solveEquivalenceRight \n {}{}{} ".format(leftTab[line],equTab[line], rightTab[line]))
     return r
 
 def changeLetter(alphabet, letter, val):
     if alphabet[letter]["constant"] == True:
         if alphabet[letter]["val"] != val:
-            print 'error, on ne peut changer une letter constant'
+            print 'changeLetter error, on ne peut changer une letter constant'
             sys.exit(1)
+    print 'changeLetter on change la valeur de', letter, 'val = ', val
     alphabet[letter]["val"] = val
     if val != None:
         alphabet[letter]["constant"] = True
@@ -315,40 +281,46 @@ def solveImplicationRight2(dict, leftTab, rightTab, alphabet, line, lineTab, equ
     Ret = collections.namedtuple('Ret', ['alpha', 'left'])
     #logger.debug("dans solveImplicationRight \n {}{}{} ".format(leftTab[line],equTab[line], rightTab[line]))
     r = Ret(alphabet, left=leftTab[line])
-    const = alphabet[rightTab[line]]["val"]
     # si gauche 0 les letter variable a droite sont none
     if leftTab[line] == "0":
         listLetterRight = letterInRight(rightTab[line])
         for letter in listLetterRight:
             if alphabet[letter]['constant'] == False:
-                alphabet[letter]['val'] = None
+                changeLetter(alphabet, letter, None)
+                #alphabet[letter]['val'] = None
         r = Ret(alphabet, left=leftTab[line])
         return r
 
     if len(rightTab[line]) > 1:
-        possiblility = fetchVarLetter(dict, leftTab, rightTab, alphabet, line, lineTab, equTab)
-        # logger.debug('possibility {}'.format(possiblility))
-        # logger.debug("-------------dans brute force ----------------- \n {}{}{} ".format(leftTab[line],equTab[line], rightTab[line]))
-        for lineRand in possiblility.randomTab:
-            for i in range(0, len(possiblility.letterTab)):
-                alphabet[possiblility.letterTab[i]]["val"] = lineRand[i]
+        possibility = fetchVarLetter(dict, leftTab, rightTab, alphabet, line, lineTab, equTab)
+        if len(possibility.letterTab) != 0:
+            logger.debug('possibility {}'.format(possibility))
+            logger.debug("-------------dans brute force ----------------- \n {}{}{} ".format(leftTab[line],equTab[line], rightTab[line]))
+            for lineRand in possibility.randomTab:
+                logger.debug('possibilirty letter {}'.format(possibility.letterTab))
+                for i in range(0, len(possibility.letterTab)):
+                    alphabet[possibility.letterTab[i]]["val"] = lineRand[i]
+                str = solveExp(r, dict, rightTab[line], leftTab, rightTab, lineTab, equTab)
+                logger.debug('brute force :  str: {} '.format(str))
+                if str == leftTab[line]:
+                    for i in range(0, len(possibility.letterTab)):
+                        alphabet[possibility.letterTab[i]]["constant"] = True
+                    r = Ret(alphabet, left=leftTab[line])
+                    break
+                else:
+                    logger.debug('dans else')
+        else:
             str = solveExp(r, dict, rightTab[line], leftTab, rightTab, lineTab, equTab)
-            # logger.debug('brute force :  str: {} '.format(str))
-            if str == leftTab[line]:
-                for i in range(0, len(possiblility.letterTab)):
-                    alphabet[possiblility.letterTab[i]]["constant"] = True
-                r = Ret(alphabet, left=leftTab[line])
-                break
+            logger.debug('solveImplicationRight2 pas de letter a tester pour le brut force on continue {}'.format(str))
+            if leftTab[line] == '1' and str != leftTab[line]:
+                print 'solveImplicationRight2 conflicts rules exit'
+                sys.exit(1)
+
     else:
         letter = rightTab[line]
-        print "LAAAAA", rightTab[li]
-        if alphabet[letter]["constant"] == True:
-            print "HERRRRREEE"
-            if const != alphabet[letter]["val"]:
-                logger.info("Two values for : {}".format(letter))
-                sys.exit(0)
         if leftTab[line] == '0':
-            alphabet[letter]["val"] = None
+            changeLetter(alphabet, letter, None)
+            #alphabet[letter]["val"] = None
             return r
 
         #gestion des conflit entre ligne
@@ -359,85 +331,23 @@ def solveImplicationRight2(dict, leftTab, rightTab, alphabet, line, lineTab, equ
             # if const != alphabet[letter]["val"]
             if alphabet[letter]["val"] == False and leftTab[line] == "1":
                 logger.debug('conflit entre ligne')
-                alphabet[letter]["val"] = None
+                changeLetter(alphabet, letter, None)
+                #alphabet[letter]["val"] = None
             # logger.debug("sortie2 solveImplicationRight \n {}{}{} letter: {}{}".format(leftTab[line],equTab[line], rightTab[line], letter,  alphabet[letter]["val"]))
             return r
         if leftTab[line] == "1":
-            alphabet[letter]["val"] = True
-            alphabet[letter]["constant"] = True
+            changeLetter(alphabet, letter, True)
+            #alphabet[letter]["val"] = True
+            #alphabet[letter]["constant"] = True
         else:
             # logger.debug(leftTab[line])
-            alphabet[letter]["val"] = None
+            changeLetter(alphabet, letter, None)
+            #alphabet[letter]["val"] = None
     #logger.debug("sortie solveImplicationRight \n {}{}{} ".format(leftTab[line],equTab[line], rightTab[line]))
     return r
 
 
 
-
-
-def solveImplicationRight(dict, leftTab, rightTab, alphabet, line, letter, lineTab, equTab):
-    print "solveImplicationRight"
-    Ret = collections.namedtuple('Ret', ['alpha', 'left'])
-    # logger.debug("dans solveImplicationRight \n {}{}{} letter tester : {}".format(leftTab[line],equTab[line], rightTab[line], letter,  alphabet[letter]["val"]))
-    r = Ret(alphabet, left=leftTab[line])
-    const = alphabet[letter]["val"]
-    if leftTab[line] == '0':
-        alphabet[letter]["val"] = None
-        return r
-    if len(rightTab[line]) > 1:
-        alphabet[letter]["val"] = True
-        r = Ret(alphabet, left=leftTab[line])
-        # logger.debug("{}{}{} start solveExp test lettre : {} val: {}".format(leftTab[line], equTab[line],
-                                                                                    #   rightTab[line], letter,
-                                                                                    #   alphabet[letter]["val"], alphabet[letter]["val"] ))
-        str = solveExp(r, dict, rightTab[line], leftTab, rightTab, lineTab, equTab)
-        if str != leftTab[line]:
-            alphabet[letter]["val"] = False
-            r = Ret(alphabet, left=leftTab[line])
-            # logger.debug("{}{}{} start2 solveExp test lettre : {} val: {}".format(leftTab[line], equTab[line],
-                                                                                #  rightTab[line], letter,
-                                                                                #  alphabet[letter]["val"],
-                                                                                #  alphabet[letter]["val"]))
-            str = solveExp(r, dict, rightTab[line], leftTab, rightTab, lineTab, equTab)
-            if str != leftTab[line]:
-                # logger.debug('dans if {}')
-                alphabet[letter]["val"] = None
-                r = Ret(alphabet, left=leftTab[line])
-        else:
-            alphabet[letter]["val"] = False
-            r = Ret(alphabet, left=leftTab[line])
-            # logger.debug("{}{}{} start3 solveExp test lettre : {} val: {}".format(leftTab[line], equTab[line],
-                                                                                #  rightTab[line], letter,
-                                                                                #  alphabet[letter]["val"],
-                                                                                #  alphabet[letter]["val"]))
-            str = solveExp(r, dict, rightTab[line], leftTab, rightTab, lineTab, equTab)
-            if str == leftTab[line]:
-                alphabet[letter]["val"] = None
-                r = Ret(alphabet, left=leftTab[line])
-            else:
-                alphabet[letter]["val"] = True
-                r = Ret(alphabet, left=leftTab[line])
-    else:
-        letter = rightTab[line]
-        #gestion des conflit entre ligne
-        if alphabet[letter]["constant"] == True:
-            # if alphabet[letter]["val"] == True and leftTab[line] == "0" :
-            #     alphabet[letter]["val"] = None
-            # elif alphabet[letter]["val"] == False and leftTab[line] == "1":
-            # if const != alphabet[letter]["val"]
-            if alphabet[letter]["val"] == False and leftTab[line] == "1":
-                logger.debug('conflit entre ligne')
-                alphabet[letter]["val"] = None
-            # logger.debug("sortie2 solveImplicationRight \n {}{}{} letter: {}{}".format(leftTab[line],equTab[line], rightTab[line], letter,  alphabet[letter]["val"]))
-            return r
-        if leftTab[line] == "1":
-            alphabet[letter]["val"] = True
-            alphabet[letter]["constant"] = True
-        else:
-            logger.debug(leftTab[line])
-            alphabet[letter]["val"] = None
-    # logger.debug("sortie solveImplicationRight \n {}{}{} letter: {} {}".format(leftTab[line],equTab[line], rightTab[line], letter,  alphabet[letter]["val"]))
-    return r
 
 
 def parseRightLetter(letter, leftTab, rightTab, r, lineTab, equTab):
@@ -552,14 +462,15 @@ def main(argv):
     leftTab = re.findall(".*[A-Z()!]\s*(?=\=>)|.*[A-Z()!]\s*(?=<\=>)", file2)
     rightTab = re.findall("(?<=\=>).*[A-Z()!]\s*(?=\n)|(?<=<\=>).*[A-Z()!]\s*(?=\n)", file2)
     equTab = re.findall("=>|<=>", file2)
-    equalTab = re.findall("(?<=\n=).*", file2)
+    equalTab = re.findall("(?<=\n=)", file2)
     queryTab = re.findall("(?<=\n\?)[A-Z]*$", file2)
-    errChar = re.findall("[^A-Z=>+|\(\)\^\!?\d\s]", file2)
+    errChar = re.findall("[^A-Z<=>+|\(\)\^\!?\d\s]", file2)
+    errEqual = re.findall("(?<=\n=)((?![A-Z]).)*", file2)
     ruleLines = re.findall(".*(?=\=>).*|.*(?=<\=>).*", file2)
     # nbLetter = re.findall("[A-Z]{2,}", ruleLines)
     r = re.compile("[A-Z]{2,}")
     newlist = filter(r.match, ruleLines)
-    print "newlist", newlist
+    print "newlist", errEqual
 
     # print "nbLetter", nbLetter
     if len(leftTab) == 0:
@@ -571,7 +482,7 @@ def main(argv):
     elif len(equTab) == 0:
         print "error equivalence"
         sys.exit(0)
-    elif len(equalTab) == 0:
+    elif len(errEqual) != 0:
         print "error equal"
         sys.exit(0)
     elif len(queryTab) == 0:
