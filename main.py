@@ -183,7 +183,6 @@ def random_tab(nbLetter):
     # print i
     return tab
 
-
 def fetchVarLetter(dict, leftTab, rightTab, alphabet, line, lineTab, equTab):
     rightLetter = re.findall("[A-Z]", rightTab[line])
     Ret = collections.namedtuple('Ret', ['letterTab', 'randomTab'])
@@ -198,9 +197,6 @@ def fetchVarLetter(dict, leftTab, rightTab, alphabet, line, lineTab, equTab):
 
 #bruteforce pour le coté droit, il teste True, apres False
 def solveRightSide(dict, leftTab, rightTab, alphabet, line, lineTab, equTab):
-
-
-
     if equTab[line] == '=>':
         # logger.debug('dans implication')
         return solveImplicationRight2(dict, leftTab, rightTab, alphabet, line, lineTab, equTab)
@@ -212,6 +208,7 @@ def solveRightSide(dict, leftTab, rightTab, alphabet, line, lineTab, equTab):
     return
 
 def solveEquivalenceRight(dict, leftTab, rightTab, alphabet, line, letter, lineTab, equTab):
+    print "solveEquivalenceRight"
     Ret = collections.namedtuple('Ret', ['alpha', 'left'])
     r = Ret(alphabet, left=leftTab[line])
     const = alphabet[letter]["val"]
@@ -260,19 +257,18 @@ def solveEquivalenceRight(dict, leftTab, rightTab, alphabet, line, letter, lineT
     return r
 
 def solveEquivalenceRight2(dict, leftTab, rightTab, alphabet, line, lineTab, equTab):
+    print "solveEquivalenceRight2"
     Ret = collections.namedtuple('Ret', ['alpha', 'left'])
     r = Ret(alphabet, left=leftTab[line])
-
+    # const = alphabet[letter]["val"]
     if leftTab[line] == "0":
         tmp = False
     else:
         tmp = True
-
     if len(rightTab[line]) > 1:
         possiblility = fetchVarLetter(dict, leftTab, rightTab, alphabet, line, lineTab, equTab)
         # logger.debug('possibility {}'.format(possiblility))
         # logger.debug("-------------dans brute force ----------------- \n {}{}{} ".format(leftTab[line], equTab[line],
-                                                                                        #  rightTab[line]))
         for lineRand in possiblility.randomTab:
             for i in range(0, len(possiblility.letterTab)):
                 alphabet[possiblility.letterTab[i]]["val"] = lineRand[i]
@@ -304,13 +300,22 @@ def solveEquivalenceRight2(dict, leftTab, rightTab, alphabet, line, lineTab, equ
     # logger.debug("sortie \n solveEquivalenceRight \n {}{}{} ".format(leftTab[line],equTab[line], rightTab[line]))
     return r
 
+def changeLetter(alphabet, letter, val):
+    if alphabet[letter]["constant"] == True:
+        if alphabet[letter]["val"] != val:
+            print 'error, on ne peut changer une letter constant'
+            sys.exit(1)
+    alphabet[letter]["val"] = val
+    if val != None:
+        alphabet[letter]["constant"] = True
+    return alphabet
 
 def solveImplicationRight2(dict, leftTab, rightTab, alphabet, line, lineTab, equTab):
-
+    print "solveImplicationRight2"
     Ret = collections.namedtuple('Ret', ['alpha', 'left'])
     #logger.debug("dans solveImplicationRight \n {}{}{} ".format(leftTab[line],equTab[line], rightTab[line]))
     r = Ret(alphabet, left=leftTab[line])
-
+    const = alphabet[rightTab[line]]["val"]
     # si gauche 0 les letter variable a droite sont none
     if leftTab[line] == "0":
         listLetterRight = letterInRight(rightTab[line])
@@ -336,7 +341,12 @@ def solveImplicationRight2(dict, leftTab, rightTab, alphabet, line, lineTab, equ
                 break
     else:
         letter = rightTab[line]
-
+        print "LAAAAA", rightTab[li]
+        if alphabet[letter]["constant"] == True:
+            print "HERRRRREEE"
+            if const != alphabet[letter]["val"]:
+                logger.info("Two values for : {}".format(letter))
+                sys.exit(0)
         if leftTab[line] == '0':
             alphabet[letter]["val"] = None
             return r
@@ -363,8 +373,10 @@ def solveImplicationRight2(dict, leftTab, rightTab, alphabet, line, lineTab, equ
 
 
 
-def solveImplicationRight(dict, leftTab, rightTab, alphabet, line, letter, lineTab, equTab):
 
+
+def solveImplicationRight(dict, leftTab, rightTab, alphabet, line, letter, lineTab, equTab):
+    print "solveImplicationRight"
     Ret = collections.namedtuple('Ret', ['alpha', 'left'])
     # logger.debug("dans solveImplicationRight \n {}{}{} letter tester : {}".format(leftTab[line],equTab[line], rightTab[line], letter,  alphabet[letter]["val"]))
     r = Ret(alphabet, left=leftTab[line])
@@ -543,8 +555,13 @@ def main(argv):
     equalTab = re.findall("(?<=\n=).*", file2)
     queryTab = re.findall("(?<=\n\?)[A-Z]*$", file2)
     errChar = re.findall("[^A-Z=>+|\(\)\^\!?\d\s]", file2)
-    nbLetter = re.findall("[A-Z]{2,}(?=\=>)|[A-Z]{2,}(?=<\=>)", file2)
-    
+    ruleLines = re.findall(".*(?=\=>).*|.*(?=<\=>).*", file2)
+    # nbLetter = re.findall("[A-Z]{2,}", ruleLines)
+    r = re.compile("[A-Z]{2,}")
+    newlist = filter(r.match, ruleLines)
+    print "newlist", newlist
+
+    # print "nbLetter", nbLetter
     if len(leftTab) == 0:
         print "error left side of rule"
         sys.exit(0)
@@ -562,6 +579,9 @@ def main(argv):
         sys.exit(0)
     elif len(errChar) != 0:
         print "None accepted character"
+        sys.exit(0)
+    elif len(newlist) != 0:
+        print "Error syntaxe"
         sys.exit(0)
     print "equery", queryTab
     dict = findQueryLetter(queryTab, leftTab, rightTab)
