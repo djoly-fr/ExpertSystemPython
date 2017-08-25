@@ -210,7 +210,7 @@ def solveRightSide(dict, leftTab, rightTab, alphabet, line, lineTab, equTab):
 
 
 def solveEquivalenceRight2(dict, leftTab, rightTab, alphabet, line, lineTab, equTab):
-    print "solveEquivalenceRight2"
+    logger.debug("solveEquivalenceRight2")
     Ret = collections.namedtuple('Ret', ['alpha', 'left'])
     r = Ret(alphabet, left=leftTab[line])
     # const = alphabet[letter]["val"]
@@ -223,21 +223,21 @@ def solveEquivalenceRight2(dict, leftTab, rightTab, alphabet, line, lineTab, equ
         if len(possibility.letterTab) != 0:
             # logger.debug('possibility {}'.format(possiblility))
             # logger.debug("-------------dans brute force ----------------- \n {}{}{} ".format(leftTab[line], equTab[line],
-            for lineRand in possiblility.randomTab:
-                for i in range(0, len(possiblility.letterTab)):
-                    alphabet[possiblility.letterTab[i]]["val"] = lineRand[i]
+            for lineRand in possibility.randomTab:
+                for i in range(0, len(possibility.letterTab)):
+                    alphabet[possibility.letterTab[i]]["val"] = lineRand[i]
                 str = solveExp(r, dict, rightTab[line], leftTab, rightTab, lineTab, equTab)
                 # logger.debug('brute force :  str: {} '.format(str))
                 if str == leftTab[line]:
-                    for i in range(0, len(possiblility.letterTab)):
-                        alphabet[possiblility.letterTab[i]]["constant"] = True
+                    for i in range(0, len(possibility.letterTab)):
+                        alphabet[possibility.letterTab[i]]["constant"] = True
                     r = Ret(alphabet, left=leftTab[line])
                     break
         else:
             str = solveExp(r, dict, rightTab[line], leftTab, rightTab, lineTab, equTab)
             logger.debug('pas de letter a tester pour le brut force on continue {}'.format(str))
             if str != leftTab[line]:
-                print 'solveEquivalenceRight2 error conflicts rules'
+                logger.debug('solveEquivalenceRight2 error conflicts rules')
                 sys.exit(1)
 
     else:
@@ -268,16 +268,16 @@ def solveEquivalenceRight2(dict, leftTab, rightTab, alphabet, line, lineTab, equ
 def changeLetter(alphabet, letter, val):
     if alphabet[letter]["constant"] == True:
         if alphabet[letter]["val"] != val:
-            print 'changeLetter error, on ne peut changer une letter constant'
+            logger.debug('changeLetter error, on ne peut changer une letter constant')
             sys.exit(1)
-    print 'changeLetter on change la valeur de', letter, 'val = ', val
+    logger.debug('changeLetter on change la valeur de {} val {}'.format(letter, val))
     alphabet[letter]["val"] = val
     if val != None:
         alphabet[letter]["constant"] = True
     return alphabet
 
 def solveImplicationRight2(dict, leftTab, rightTab, alphabet, line, lineTab, equTab):
-    print "solveImplicationRight2"
+    logger.debug("solveImplicationRight2")
     Ret = collections.namedtuple('Ret', ['alpha', 'left'])
     #logger.debug("dans solveImplicationRight \n {}{}{} ".format(leftTab[line],equTab[line], rightTab[line]))
     r = Ret(alphabet, left=leftTab[line])
@@ -313,7 +313,7 @@ def solveImplicationRight2(dict, leftTab, rightTab, alphabet, line, lineTab, equ
             str = solveExp(r, dict, rightTab[line], leftTab, rightTab, lineTab, equTab)
             logger.debug('solveImplicationRight2 pas de letter a tester pour le brut force on continue {}'.format(str))
             if leftTab[line] == '1' and str != leftTab[line]:
-                print 'solveImplicationRight2 conflicts rules exit'
+                logger.debug('solveImplicationRight2 conflicts rules exit')
                 sys.exit(1)
 
     else:
