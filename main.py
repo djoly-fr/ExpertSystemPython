@@ -310,8 +310,11 @@ def solveImplicationRight2(dict, leftTab, rightTab, alphabet, line, lineTab, equ
                 else:
                     logger.debug('dans else')
         else:
+            logger.debug("start solve {} {} {} ".format( leftTab[line], equTab[line], rightTab[line]))
+
             str = solveExp(r, dict, rightTab[line], leftTab, rightTab, lineTab, equTab)
-            logger.debug('solveImplicationRight2 pas de letter a tester pour le brut force on continue {}'.format(str))
+            logger.debug("")
+            logger.debug('solveImplicationRight2 pas de letter variable a droite on lance le solve, retour:  {}'.format(str))
             if leftTab[line] == '1' and str != leftTab[line]:
                 logger.debug('solveImplicationRight2 conflicts rules exit')
                 sys.exit(1)
@@ -521,7 +524,7 @@ def main(argv):
         #dict indique la position des queries
 
         sortedLine = parseQuery2(letter, dict, leftTab, rightTab, alphabet, queryTab, lineTab, equTab)
-        # logger.debug('sorted Line {}'.format(sortedLine))
+        logger.debug('sorted Line {}'.format(sortedLine))
         for line in sortedLine:
             # logger.info('-----solve line {} -----'.format(line))
             # logger.debug("{} {} {}".format(leftTab[line], equTab[line], rightTab[line]))
